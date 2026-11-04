@@ -48,8 +48,11 @@ Route::prefix('admin')->name('admin.')->group(function () {
     // Area admin yang dilindungi middleware auth
     Route::middleware(\App\Http\Middleware\EnsureAdmin::class)->group(function () {
         Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
-        Route::resource('guides', \App\Http\Controllers\Admin\GuideController::class)->except(['show']);
-        Route::resource('education', \App\Http\Controllers\Admin\EducationArticleController::class)->except(['show']);
-        Route::resource('announcements', \App\Http\Controllers\Admin\AnnouncementController::class)->except(['show']);
+        Route::resource('guides', \App\Http\Controllers\Admin\GuideController::class);
+        Route::resource('education', \App\Http\Controllers\Admin\EducationArticleController::class);
+        Route::resource('announcements', \App\Http\Controllers\Admin\AnnouncementController::class);
+        Route::get('/wilayah', [\App\Http\Controllers\Admin\RegionController::class, 'index'])->name('regions.index');
+        Route::get('/integrasi', [\App\Http\Controllers\Admin\IntegrationController::class, 'index'])->name('integrations.index');
+        Route::get('/notifikasi', [\App\Http\Controllers\Admin\NotificationSettingController::class, 'index'])->name('notifications.index');
     });
 });

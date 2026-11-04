@@ -127,14 +127,21 @@
                         @foreach ($articles as $art)
                             <tr>
                                 <td>
-                                    <div class="fw-semibold text-dark mb-1">
+                                    <a href="{{ route('admin.education.show', $art) }}" class="fw-semibold text-dark text-decoration-none d-block mb-1">
                                         {{ $art->title }}
                                         @if ($art->is_demo)
                                             <span class="badge-demo py-0 px-2 ms-1">DEMO</span>
                                         @endif
-                                    </div>
+                                    </a>
                                     <div class="small text-secondary-soft">
-                                        Oleh: {{ $art->author ?? 'Redaksi' }}
+                                        @if ($art->source_name)
+                                            <span class="text-dark">{{ $art->source_name }}</span>
+                                            @if ($art->author)
+                                                &bull; <span class="text-secondary-soft">{{ $art->author }}</span>
+                                            @endif
+                                        @else
+                                            Oleh: {{ $art->author ?? 'Tim Redaksi' }}
+                                        @endif
                                     </div>
                                 </td>
                                 <td>
@@ -172,35 +179,26 @@
                                     </div>
                                 </td>
                                 <td class="text-end">
-                                    <div class="btn-group btn-group-sm">
-                                        @if ($art->status === 'published')
-                                            <a href="{{ route('edukasi.show', $art->slug) }}"
-                                               target="_blank"
-                                               class="btn btn-outline-secondary"
-                                               title="Lihat di Publik">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                        @endif
+                                    <div class="btn-group btn-group-sm" role="group" aria-label="Aksi">
+                                        <a href="{{ route('admin.education.show', $art) }}"
+                                           class="btn btn-outline-secondary"
+                                           title="Lihat Detail Artikel">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
                                         <a href="{{ route('admin.education.edit', $art) }}"
-                                           class="btn btn-outline-primary"
+                                           class="btn btn-outline-secondary"
                                            title="Edit Artikel">
                                             <i class="bi bi-pencil"></i>
                                         </a>
                                         <button type="button"
                                                 class="btn btn-outline-danger"
-                                                onclick="if(confirm('Yakin ingin menghapus artikel edukasi: {{ addslashes($art->title) }}?')) document.getElementById('del-art-{{ $art->id }}').submit();"
-                                                title="Hapus">
+                                                data-delete-url="{{ route('admin.education.destroy', $art) }}"
+                                                data-delete-title="{{ $art->title }}"
+                                                data-delete-type="artikel edukasi"
+                                                title="Hapus Artikel">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </div>
-
-                                    <form id="del-art-{{ $art->id }}"
-                                          action="{{ route('admin.education.destroy', $art) }}"
-                                          method="POST"
-                                          class="d-none">
-                                        @csrf
-                                        @method('DELETE')
-                                    </form>
                                 </td>
                             </tr>
                         @endforeach
@@ -217,11 +215,26 @@
             <div class="p-5 text-center">
                 <i class="bi bi-book mb-2 text-secondary-soft" style="font-size: 2.2rem;"></i>
                 <h3 class="h6 fw-semibold mb-1">Belum ada artikel edukasi</h3>
-                <p class="text-secondary-soft small mb-3">Mulai tambahkan materi literasi karhutla dan ekosistem gambut.</p>
-                <a href="{{ route('admin.education.create') }}" class="btn btn-primary btn-sm">
-                    <i class="bi bi-plus-lg me-1"></i> Tambah Artikel Sekarang
-                </a>
+                <p class="text-secondary-soft small mb-3">
+                    @if ($search !== '' || $filterCategory !== '' || $filterStatus !== '')
+                        Tidak ada artikel yang cocok dengan filter yang Anda gunakan.
+                    @else
+                        Mulai tambahkan materi literasi karhutla dan ekosistem gambut.
+                    @endif
+                </p>
+                <div class="d-flex justify-content-center gap-2">
+                    @if ($search !== '' || $filterCategory !== '' || $filterStatus !== '')
+                        <a href="{{ route('admin.education.index') }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Filter
+                        </a>
+                    @endif
+                    <a href="{{ route('admin.education.create') }}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-plus-lg me-1"></i> Tambah Artikel Sekarang
+                    </a>
+                </div>
             </div>
         @endif
     </div>
+
+    @include('admin.partials.delete-modal')
 @endsection

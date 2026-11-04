@@ -41,6 +41,7 @@ class AnnouncementController extends Controller
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
                   ->orWhere('source_name', 'like', "%{$search}%")
+                  ->orWhere('summary', 'like', "%{$search}%")
                   ->orWhere('body', 'like', "%{$search}%");
             });
         }
@@ -111,6 +112,19 @@ class AnnouncementController extends Controller
 
         return redirect()->route('admin.announcements.index')
             ->with('success', 'Pengumuman <strong>"' . e($announcement->title) . '"</strong> berhasil ditambahkan.');
+    }
+
+    /**
+     * Tampilkan rincian pengumuman untuk ditinjau admin.
+     */
+    public function show(Announcement $announcement): View
+    {
+        $announcement->load('province');
+
+        return view('admin.announcements.show', [
+            'announcement' => $announcement,
+            'levels' => Announcement::LEVELS,
+        ]);
     }
 
     /**

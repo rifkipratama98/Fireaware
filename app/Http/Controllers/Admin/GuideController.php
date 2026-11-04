@@ -34,7 +34,8 @@ class GuideController extends Controller
         if ($search !== '') {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('source_name', 'like', "%{$search}%");
+                  ->orWhere('source_name', 'like', "%{$search}%")
+                  ->orWhere('summary', 'like', "%{$search}%");
             });
         }
 
@@ -102,6 +103,17 @@ class GuideController extends Controller
 
         return redirect()->route('admin.guides.index')
             ->with('success', 'Panduan keselamatan <strong>"' . e($guide->title) . '"</strong> berhasil ditambahkan.');
+    }
+
+    /**
+     * Tampilkan rincian panduan keselamatan untuk ditinjau admin.
+     */
+    public function show(Guide $guide): View
+    {
+        return view('admin.guides.show', [
+            'guide' => $guide,
+            'categories' => Guide::CATEGORIES,
+        ]);
     }
 
     /**

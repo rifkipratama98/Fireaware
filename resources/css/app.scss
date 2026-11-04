@@ -324,13 +324,22 @@ $table-border-color: $border-soft;
         height: 100vh;
         flex: 0 0 $offcanvas-horizontal-width;
         max-width: $offcanvas-horizontal-width;
+        transition: margin-left .22s ease, flex-basis .22s ease, max-width .22s ease;
     }
 
     .admin-sidebar .offcanvas-header .btn-close { display: none; }
 
+    .admin-shell.sidebar-collapsed .admin-sidebar {
+        margin-left: -$offcanvas-horizontal-width;
+        flex-basis: 0;
+        max-width: 0;
+        overflow: hidden;
+    }
+
     .admin-shell > .admin-main {
         flex: 1 1 auto;
         min-width: 0;
+        transition: all .22s ease;
     }
 }
 
@@ -374,6 +383,56 @@ $table-border-color: $border-soft;
     border: 1px solid $border-soft;
     border-radius: .75rem;
 }
+
+.dash-stat-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+
+    &:hover .stat-card {
+        border-color: rgba($primary, .45);
+    }
+}
+
+.stat-sub {
+    font-size: .8rem;
+    color: $text-secondary;
+}
+
+.status-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: .35rem;
+    font-size: .75rem;
+    font-weight: 600;
+    padding: .2rem .6rem;
+    border-radius: 2rem;
+
+    &.status-ok {
+        background-color: rgba($leaf-green, .12);
+        color: shade-color($leaf-green, 20%);
+        border: 1px solid rgba($leaf-green, .3);
+    }
+
+    &.status-warn {
+        background-color: rgba($warning, .14);
+        color: shade-color($warning, 30%);
+        border: 1px solid rgba($warning, .35);
+    }
+
+    &.status-empty {
+        background-color: rgba($text-secondary, .1);
+        color: $text-secondary;
+        border: 1px solid rgba($text-secondary, .25);
+    }
+
+    &.status-err {
+        background-color: rgba($critical, .12);
+        color: $critical;
+        border: 1px solid rgba($critical, .3);
+    }
+}
+
 
 // =====================================================================
 // 6. Halaman Beranda publik

@@ -16,10 +16,9 @@
                href="{{ route('admin.dashboard') }}">
                 <i class="bi bi-grid"></i>Dashboard
             </a>
-            <a class="nav-link" href="#"><i class="bi bi-map"></i>Peta Risiko</a>
         </div>
 
-        <div class="sidebar-section-title mt-4">Data &amp; Konten</div>
+        <div class="sidebar-section-title mt-4">Konten</div>
         <div class="nav flex-column">
             <a class="nav-link {{ request()->routeIs('admin.guides.*') ? 'active' : '' }}"
                href="{{ route('admin.guides.index') }}">
@@ -27,21 +26,28 @@
             </a>
             <a class="nav-link {{ request()->routeIs('admin.education.*') ? 'active' : '' }}"
                href="{{ route('admin.education.index') }}">
-                <i class="bi bi-mortarboard"></i>Edukasi Karhutla
+                <i class="bi bi-mortarboard"></i>Edukasi
             </a>
             <a class="nav-link {{ request()->routeIs('admin.announcements.*') ? 'active' : '' }}"
                href="{{ route('admin.announcements.index') }}">
-                <i class="bi bi-megaphone"></i>Pengumuman Resmi
+                <i class="bi bi-megaphone"></i>Pengumuman
             </a>
-            <a class="nav-link" href="#"><i class="bi bi-journal-text"></i>Laporan Kebakaran</a>
-            <a class="nav-link" href="#"><i class="bi bi-fire"></i>Titik Panas</a>
-            <a class="nav-link" href="#"><i class="bi bi-bounding-box-circles"></i>Wilayah</a>
         </div>
 
-        <div class="sidebar-section-title mt-4">Manajemen</div>
+        <div class="sidebar-section-title mt-4">Sistem</div>
         <div class="nav flex-column">
-            <a class="nav-link" href="#"><i class="bi bi-people"></i>Pengguna</a>
-            <a class="nav-link" href="#"><i class="bi bi-gear"></i>Pengaturan</a>
+            <a class="nav-link {{ request()->routeIs('admin.regions.*') ? 'active' : '' }}"
+               href="{{ route('admin.regions.index') }}">
+                <i class="bi bi-map"></i>Informasi Wilayah
+            </a>
+            <a class="nav-link {{ request()->routeIs('admin.integrations.*') ? 'active' : '' }}"
+               href="{{ route('admin.integrations.index') }}">
+                <i class="bi bi-arrow-repeat"></i>Integrasi Data
+            </a>
+            <a class="nav-link {{ request()->routeIs('admin.notifications.*') ? 'active' : '' }}"
+               href="{{ route('admin.notifications.index') }}">
+                <i class="bi bi-bell"></i>Konfigurasi Notifikasi
+            </a>
         </div>
     </nav>
 

@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\Guide;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -142,6 +143,7 @@ class GuideTest extends TestCase
 
     public function test_admin_can_view_all_guides_including_drafts(): void
     {
+        $this->actingAs(User::factory()->create());
         Guide::create([
             'title' => 'Panduan Tayang',
             'slug' => 'panduan-tayang',
@@ -175,6 +177,7 @@ class GuideTest extends TestCase
 
     public function test_admin_can_store_valid_guide(): void
     {
+        $this->actingAs(User::factory()->create());
         $payload = [
             'title' => 'Panduan Baru Pembuatan Clean Room',
             'slug' => 'panduan-baru-pembuatan-clean-room',
@@ -199,6 +202,7 @@ class GuideTest extends TestCase
 
     public function test_admin_store_validates_source_and_dangerous_content(): void
     {
+        $this->actingAs(User::factory()->create());
         // 1. Validasi sumber rujukan kosong / tidak kredibel
         $invalidSourcePayload = [
             'title' => 'Panduan Tanpa Sumber Valid',
@@ -230,6 +234,7 @@ class GuideTest extends TestCase
 
     public function test_admin_can_update_guide(): void
     {
+        $this->actingAs(User::factory()->create());
         $guide = Guide::create([
             'title' => 'Judul Awal Panduan',
             'slug' => 'judul-awal-panduan',
@@ -264,6 +269,7 @@ class GuideTest extends TestCase
 
     public function test_admin_can_delete_guide(): void
     {
+        $this->actingAs(User::factory()->create());
         $guide = Guide::create([
             'title' => 'Panduan Akan Dihapus',
             'slug' => 'panduan-akan-dihapus',
@@ -280,5 +286,86 @@ class GuideTest extends TestCase
         $this->assertDatabaseMissing('guides', [
             'id' => $guide->id,
         ]);
+    }
+
+    public function test_admin_can_view_guide_detail_including_draft(): void
+    {
+        $admin = User::factory()->create();
+        $this->actingAs($admin);
+
+        $draftGuide = Guide::create([
+            'title' => 'Panduan Khusus Draf Editor',
+            'slug' => 'panduan-khusus-draf-editor',
+            'category' => 'menghadapi-asap',
+            'summary' => 'Ringkasan panduan yang masih dalam peninjauan internal tim.',
+            'content' => '### Bagian 1\nLangkah-langkah terstruktur panduan keselamatan.',
+            'source_name' => 'Kemenkes RI',
+            'source_url' => 'https://kemkes.go.id',
+            'status' => Guide::STATUS_DRAFT,
+            'published_at' => null,
+        ]);
+
+        $response = $this->get(route('admin.guides.show', $draftGuide));
+
+        $response->assertStatus(200);
+        $response->assertSee('Panduan Khusus Draf Editor');
+        $response->assertSee('Status: Draf');
+        $response->assertSee('Kemenkes RI');
+    }
+
+    public function test_admin_can_filter_guides_by_status_and_search(): void
+    {
+        $admin = User::factory()->create();
+        $this->actingAs($admin);
+
+        Guide::create([
+            'title' => 'Panduan Masker Kain vs Medis',
+            'slug' => 'panduan-masker-kain-vs-medis',
+            'category' => 'mengurangi-paparan-asap',
+            'summary' => 'Perbandingan efektivitas filtrasi berbagai jenis masker pernapasan.',
+            'content' => 'Masker N95 mampu memfilter partikel PM2.5 hingga 95 persen efektivitas.',
+            'source_name' => 'Kemenkes RI',
+            'status' => Guide::STATUS_PUBLISHED,
+            'published_at' => now()->subDay(),
+        ]);
+
+        Guide::create([
+            'title' => 'Draf SOP Evakuasi Mandiri',
+            'slug' => 'draf-sop-evakuasi-mandiri',
+            'category' => 'persiapan-saat-kualitas-udara-memburuk',
+            'summary' => 'SOP jalur aman evakuasi saat jarak pandang di bawah 50 meter.',
+            'content' => 'Hindari rute melewati semak belukar gambut yang berpotensi memiliki bara bawah tanah.',
+            'source_name' => 'BPBD Kalbar',
+            'status' => Guide::STATUS_DRAFT,
+            'published_at' => null,
+        ]);
+
+        // Filter status published
+        $resPublished = $this->get(route('admin.guides.index', ['status' => 'published']));
+        $resPublished->assertStatus(200);
+        $resPublished->assertSee('Panduan Masker Kain vs Medis');
+        $resPublished->assertDontSee('Draf SOP Evakuasi Mandiri');
+
+        // Filter status draft
+        $resDraft = $this->get(route('admin.guides.index', ['status' => 'draft']));
+        $resDraft->assertStatus(200);
+        $resDraft->assertSee('Draf SOP Evakuasi Mandiri');
+        $resDraft->assertDontSee('Panduan Masker Kain vs Medis');
+
+        // Pencarian judul / sumber
+        $resSearch = $this->get(route('admin.guides.index', ['q' => 'Evakuasi Mandiri']));
+        $resSearch->assertStatus(200);
+        $resSearch->assertSee('Draf SOP Evakuasi Mandiri');
+        $resSearch->assertDontSee('Panduan Masker Kain vs Medis');
+    }
+
+    public function test_admin_store_validates_required_fields(): void
+    {
+        $admin = User::factory()->create();
+        $this->actingAs($admin);
+
+        $response = $this->post(route('admin.guides.store'), []);
+
+        $response->assertSessionHasErrors(['title', 'category', 'summary', 'content', 'source_name', 'status']);
     }
 }

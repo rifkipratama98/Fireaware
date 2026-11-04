@@ -6,6 +6,12 @@
         <span class="visually-hidden">Buka menu</span>
     </button>
 
+    <button class="btn btn-light d-none d-lg-inline-flex p-2 align-items-center justify-content-center"
+            type="button" id="sidebarCollapseBtn" aria-label="Ciutkan atau rentangkan sidebar"
+            title="Ciutkan / Buka Sidebar">
+        <i class="bi bi-layout-sidebar-inset fs-5 lh-1" aria-hidden="true"></i>
+    </button>
+
     <div class="me-auto">
         <div class="small text-secondary-soft d-none d-md-block">FireAware Kalimantan</div>
         <h1 class="h5 mb-0">@yield('page_title', 'Dashboard')</h1>

@@ -127,9 +127,9 @@
                         @foreach ($guides as $guide)
                             <tr>
                                 <td>
-                                    <div class="fw-semibold text-dark mb-1">
+                                    <a href="{{ route('admin.guides.show', $guide) }}" class="fw-semibold text-dark text-decoration-none d-block mb-1">
                                         {{ $guide->title }}
-                                    </div>
+                                    </a>
                                     <div class="small text-secondary-soft text-truncate" style="max-width: 380px;">
                                         {{ $guide->summary }}
                                     </div>
@@ -168,35 +168,26 @@
                                     </div>
                                 </td>
                                 <td class="text-end">
-                                    <div class="btn-group btn-group-sm">
-                                        @if ($guide->status === 'published')
-                                            <a href="{{ route('guides.show', $guide->slug) }}"
-                                               target="_blank"
-                                               class="btn btn-outline-secondary"
-                                               title="Lihat Halaman Publik">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                        @endif
+                                    <div class="btn-group btn-group-sm" role="group" aria-label="Aksi">
+                                        <a href="{{ route('admin.guides.show', $guide) }}"
+                                           class="btn btn-outline-secondary"
+                                           title="Lihat Detail Panduan">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
                                         <a href="{{ route('admin.guides.edit', $guide) }}"
-                                           class="btn btn-outline-primary"
+                                           class="btn btn-outline-secondary"
                                            title="Edit Panduan">
                                             <i class="bi bi-pencil"></i>
                                         </a>
                                         <button type="button"
                                                 class="btn btn-outline-danger"
-                                                onclick="if(confirm('Yakin ingin menghapus panduan: {{ addslashes($guide->title) }}?')) document.getElementById('delete-form-{{ $guide->id }}').submit();"
+                                                data-delete-url="{{ route('admin.guides.destroy', $guide) }}"
+                                                data-delete-title="{{ $guide->title }}"
+                                                data-delete-type="panduan keselamatan"
                                                 title="Hapus Panduan">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </div>
-
-                                    <form id="delete-form-{{ $guide->id }}"
-                                          action="{{ route('admin.guides.destroy', $guide) }}"
-                                          method="POST"
-                                          class="d-none">
-                                        @csrf
-                                        @method('DELETE')
-                                    </form>
                                 </td>
                             </tr>
                         @endforeach
@@ -220,10 +211,19 @@
                         Mulai tambahkan panduan edukasi keselamatan masyarakat.
                     @endif
                 </p>
-                <a href="{{ route('admin.guides.create') }}" class="btn btn-primary btn-sm">
-                    <i class="bi bi-plus-lg me-1"></i> Tambah Panduan Sekarang
-                </a>
+                <div class="d-flex justify-content-center gap-2">
+                    @if ($search !== '' || $filterCategory !== '' || $filterStatus !== '')
+                        <a href="{{ route('admin.guides.index') }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Filter
+                        </a>
+                    @endif
+                    <a href="{{ route('admin.guides.create') }}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-plus-lg me-1"></i> Tambah Panduan Sekarang
+                    </a>
+                </div>
             </div>
         @endif
     </div>
+
+    @include('admin.partials.delete-modal')
 @endsection

@@ -37,6 +37,8 @@ class EducationArticleRequest extends FormRequest
             'image' => ['nullable', 'image', 'mimes:jpeg,png,jpg,webp', 'max:2048'],
             'image_caption' => ['nullable', 'string', 'max:255'],
             'author' => ['nullable', 'string', 'max:120'],
+            'source_name' => ['nullable', 'string', 'max:160'],
+            'source_url' => ['nullable', 'url', 'max:255'],
             'reading_time_minutes' => ['nullable', 'integer', 'min:1', 'max:60'],
             'status' => ['required', Rule::in([EducationArticle::STATUS_PUBLISHED, EducationArticle::STATUS_DRAFT])],
             'is_demo' => ['nullable', 'boolean'],
@@ -56,7 +58,9 @@ class EducationArticleRequest extends FormRequest
             'image.image' => 'File yang diunggah harus berupa gambar.',
             'image.mimes' => 'Format gambar yang didukung adalah JPEG, PNG, JPG, atau WEBP.',
             'image.max' => 'Ukuran file gambar tidak boleh melebihi 2 MB.',
+            'source_url.url' => 'Format URL rujukan harus berupa tautan yang valid (contoh: https://...).',
             'status.required' => 'Status publikasi wajib dipilih.',
+            'status.in' => 'Status publikasi harus berupa "published" atau "draft".',
         ];
     }
 }

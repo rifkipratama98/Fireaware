@@ -36,5 +36,26 @@
         </div>
     </div>
 
+    <script>
+        (function () {
+            const collapseBtn = document.getElementById('sidebarCollapseBtn');
+            const shell = document.querySelector('.admin-shell');
+
+            if (collapseBtn && shell) {
+                // Pulihkan preferensi collapse pengguna
+                if (localStorage.getItem('fireaware_admin_sidebar_collapsed') === 'true') {
+                    shell.classList.add('sidebar-collapsed');
+                }
+
+                collapseBtn.addEventListener('click', function () {
+                    shell.classList.toggle('sidebar-collapsed');
+                    const isCollapsed = shell.classList.contains('sidebar-collapsed');
+                    localStorage.setItem('fireaware_admin_sidebar_collapsed', String(isCollapsed));
+                });
+            }
+        })();
+    </script>
+
+    @stack('scripts')
 </body>
 </html>

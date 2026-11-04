@@ -112,6 +112,37 @@
                 @enderror
             </div>
         </div>
+
+        {{-- Panel Dasar Sumber Rujukan --}}
+        <div class="panel p-4">
+            <h2 class="h6 fw-semibold mb-3 pb-2 border-bottom border-soft">Dasar Sumber Rujukan Ilmiah</h2>
+
+            <div class="mb-3">
+                <label for="source_name" class="form-label">Nama Lembaga / Sumber Rujukan <small class="text-muted fw-normal">(Opsional)</small></label>
+                <input type="text"
+                       name="source_name"
+                       id="source_name"
+                       class="form-control @error('source_name') is-invalid @enderror"
+                       value="{{ old('source_name', $article->source_name) }}"
+                       placeholder="Contoh: Pusat Riset Iklim dan Atmosfer BRIN, KLHK, atau CIFOR">
+                @error('source_name')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+
+            <div class="mb-0">
+                <label for="source_url" class="form-label">Tautan / URL Rujukan <small class="text-muted fw-normal">(Opsional)</small></label>
+                <input type="url"
+                       name="source_url"
+                       id="source_url"
+                       class="form-control @error('source_url') is-invalid @enderror"
+                       value="{{ old('source_url', $article->source_url) }}"
+                       placeholder="https://www.cifor.org">
+                @error('source_url')
+                    <div class="invalid-feedback">{{ $message }}</div>
+                @enderror
+            </div>
+        </div>
     </div>
 
     {{-- Kolom Kanan: Pengaturan & Publikasi --}}

@@ -139,12 +139,12 @@
                         @foreach ($announcements as $ann)
                             <tr>
                                 <td>
-                                    <div class="fw-semibold text-dark mb-1">
+                                    <a href="{{ route('admin.announcements.show', $ann) }}" class="fw-semibold text-dark text-decoration-none d-block mb-1">
                                         {{ $ann->title }}
                                         @if ($ann->is_demo)
                                             <span class="badge-demo py-0 px-2 ms-1">DEMO</span>
                                         @endif
-                                    </div>
+                                    </a>
                                     <div class="small text-secondary-soft text-truncate" style="max-width: 320px;">
                                         {{ $ann->excerpt(100) }}
                                     </div>
@@ -189,35 +189,26 @@
                                     </div>
                                 </td>
                                 <td class="text-end">
-                                    <div class="btn-group btn-group-sm">
-                                        @if ($ann->status === 'published')
-                                            <a href="{{ route('announcements.show', $ann->slug) }}"
-                                               target="_blank"
-                                               class="btn btn-outline-secondary"
-                                               title="Lihat di Publik">
-                                                <i class="bi bi-eye"></i>
-                                            </a>
-                                        @endif
+                                    <div class="btn-group btn-group-sm" role="group" aria-label="Aksi">
+                                        <a href="{{ route('admin.announcements.show', $ann) }}"
+                                           class="btn btn-outline-secondary"
+                                           title="Lihat Detail Pengumuman">
+                                            <i class="bi bi-eye"></i>
+                                        </a>
                                         <a href="{{ route('admin.announcements.edit', $ann) }}"
-                                           class="btn btn-outline-primary"
+                                           class="btn btn-outline-secondary"
                                            title="Edit Pengumuman">
                                             <i class="bi bi-pencil"></i>
                                         </a>
                                         <button type="button"
                                                 class="btn btn-outline-danger"
-                                                onclick="if(confirm('Yakin ingin menghapus pengumuman: {{ addslashes($ann->title) }}?')) document.getElementById('del-ann-{{ $ann->id }}').submit();"
-                                                title="Hapus">
+                                                data-delete-url="{{ route('admin.announcements.destroy', $ann) }}"
+                                                data-delete-title="{{ $ann->title }}"
+                                                data-delete-type="pengumuman resmi"
+                                                title="Hapus Pengumuman">
                                             <i class="bi bi-trash"></i>
                                         </button>
                                     </div>
-
-                                    <form id="del-ann-{{ $ann->id }}"
-                                          action="{{ route('admin.announcements.destroy', $ann) }}"
-                                          method="POST"
-                                          class="d-none">
-                                        @csrf
-                                        @method('DELETE')
-                                    </form>
                                 </td>
                             </tr>
                         @endforeach
@@ -234,11 +225,26 @@
             <div class="p-5 text-center">
                 <i class="bi bi-megaphone mb-2 text-secondary-soft" style="font-size: 2.2rem;"></i>
                 <h3 class="h6 fw-semibold mb-1">Belum ada pengumuman</h3>
-                <p class="text-secondary-soft small mb-3">Mulai terbitkan warta resmi atau status kewaspadaan karhutla.</p>
-                <a href="{{ route('admin.announcements.create') }}" class="btn btn-primary btn-sm">
-                    <i class="bi bi-plus-lg me-1"></i> Tambah Pengumuman Sekarang
-                </a>
+                <p class="text-secondary-soft small mb-3">
+                    @if ($search !== '' || $filterProvince || $filterLevel || $filterStatus !== '')
+                        Tidak ada pengumuman yang cocok dengan filter yang Anda gunakan.
+                    @else
+                        Mulai terbitkan warta resmi atau status kewaspadaan karhutla.
+                    @endif
+                </p>
+                <div class="d-flex justify-content-center gap-2">
+                    @if ($search !== '' || $filterProvince || $filterLevel || $filterStatus !== '')
+                        <a href="{{ route('admin.announcements.index') }}" class="btn btn-outline-secondary btn-sm">
+                            <i class="bi bi-arrow-counterclockwise me-1"></i> Reset Filter
+                        </a>
+                    @endif
+                    <a href="{{ route('admin.announcements.create') }}" class="btn btn-primary btn-sm">
+                        <i class="bi bi-plus-lg me-1"></i> Tambah Pengumuman Sekarang
+                    </a>
+                </div>
             </div>
         @endif
     </div>
+
+    @include('admin.partials.delete-modal')
 @endsection

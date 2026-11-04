@@ -46,11 +46,18 @@ class AnnouncementRequest extends FormRequest
     {
         return [
             'title.required' => 'Judul pengumuman wajib diisi.',
+            'title.min' => 'Judul pengumuman minimal 5 karakter.',
+            'title.max' => 'Judul pengumuman maksimal 200 karakter.',
+            'slug.unique' => 'Slug ini sudah digunakan oleh pengumuman lain.',
             'body.required' => 'Isi teks pengumuman wajib diisi.',
+            'body.min' => 'Isi pengumuman minimal 15 karakter.',
             'level.required' => 'Tingkat kewaspadaan wajib dipilih.',
+            'level.in' => 'Tingkat kewaspadaan yang dipilih tidak valid.',
             'source_name.required' => 'Instansi sumber atau penerbit pengumuman wajib dicantumkan.',
+            'source_name.min' => 'Nama instansi sumber minimal 3 karakter.',
             'source_url.url' => 'Format URL sumber harus valid (misal: https://...).',
             'status.required' => 'Status publikasi wajib dipilih.',
+            'status.in' => 'Status publikasi harus berupa "published" atau "draft".',
         ];
     }
 }

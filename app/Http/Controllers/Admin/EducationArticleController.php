@@ -35,7 +35,9 @@ class EducationArticleController extends Controller
         if ($search !== '') {
             $query->where(function ($q) use ($search) {
                 $q->where('title', 'like', "%{$search}%")
-                  ->orWhere('author', 'like', "%{$search}%");
+                  ->orWhere('author', 'like', "%{$search}%")
+                  ->orWhere('source_name', 'like', "%{$search}%")
+                  ->orWhere('summary', 'like', "%{$search}%");
             });
         }
 
@@ -111,6 +113,17 @@ class EducationArticleController extends Controller
 
         return redirect()->route('admin.education.index')
             ->with('success', 'Artikel edukasi <strong>"' . e($article->title) . '"</strong> berhasil ditambahkan.');
+    }
+
+    /**
+     * Tampilkan rincian artikel edukasi untuk ditinjau admin.
+     */
+    public function show(EducationArticle $education): View
+    {
+        return view('admin.education.show', [
+            'article' => $education,
+            'categories' => EducationArticle::CATEGORIES,
+        ]);
     }
 
     /**

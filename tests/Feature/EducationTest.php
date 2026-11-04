@@ -3,6 +3,7 @@
 namespace Tests\Feature;
 
 use App\Models\EducationArticle;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
@@ -111,6 +112,7 @@ class EducationTest extends TestCase
 
     public function test_admin_can_view_all_education_articles(): void
     {
+        $this->actingAs(User::factory()->create());
         EducationArticle::create([
             'title' => 'Artikel Published',
             'slug' => 'artikel-published',
@@ -138,6 +140,8 @@ class EducationTest extends TestCase
 
     public function test_admin_can_store_education_article_with_image_upload(): void
     {
+        $this->actingAs(User::factory()->create());
+
         Storage::fake('public');
 
         $file = UploadedFile::fake()->image('gambut.jpg', 600, 400);
@@ -172,6 +176,8 @@ class EducationTest extends TestCase
 
     public function test_image_validation_rejects_non_image_files(): void
     {
+        $this->actingAs(User::factory()->create());
+
         Storage::fake('public');
 
         $invalidFile = UploadedFile::fake()->create('dokumen.pdf', 500, 'application/pdf');
@@ -191,6 +197,7 @@ class EducationTest extends TestCase
 
     public function test_admin_can_update_and_delete_education_article(): void
     {
+        $this->actingAs(User::factory()->create());
         $article = EducationArticle::create([
             'title' => 'Artikel Sebelum Revisi',
             'slug' => 'artikel-sebelum-revisi',
@@ -205,7 +212,7 @@ class EducationTest extends TestCase
             'slug' => 'artikel-sebelum-revisi',
             'category' => 'dampak-lingkungan',
             'summary' => 'Ringkasan baru yang diperbaiki.',
-            'content' => 'Isi baru materi edukasi karhutla.',
+            'content' => 'Isi baru materi edukasi karhutla yang membahas penyebab, dampak, serta langkah pencegahan kebakaran hutan dan lahan gambut di Kalimantan.',
             'status' => EducationArticle::STATUS_PUBLISHED,
             'published_at' => now()->format('Y-m-d H:i:s'),
         ];
@@ -223,5 +230,126 @@ class EducationTest extends TestCase
         $resDelete = $this->delete(route('admin.education.destroy', $article));
         $resDelete->assertRedirect(route('admin.education.index'));
         $this->assertDatabaseMissing('education_articles', ['id' => $article->id]);
+    }
+
+    public function test_admin_can_view_education_detail_including_draft(): void
+    {
+        $admin = User::factory()->create();
+        $this->actingAs($admin);
+
+        $draft = EducationArticle::create([
+            'title' => 'Draf Riset Gambut Tropis Kalimantan',
+            'slug' => 'draf-riset-gambut-tropis-kalimantan',
+            'category' => 'ekosistem-gambut',
+            'summary' => 'Ringkasan artikel edukasi yang belum tayang untuk publik.',
+            'content' => 'Isi materi draf ilmiah ekosistem gambut.',
+            'source_name' => 'Badan Riset dan Inovasi Nasional (BRIN)',
+            'source_url' => 'https://brin.go.id',
+            'author' => 'Dr. Peneliti Gambut',
+            'status' => EducationArticle::STATUS_DRAFT,
+            'published_at' => null,
+        ]);
+
+        $response = $this->get(route('admin.education.show', $draft));
+
+        $response->assertStatus(200);
+        $response->assertSee('Draf Riset Gambut Tropis Kalimantan');
+        $response->assertSee('Badan Riset dan Inovasi Nasional (BRIN)');
+        $response->assertSee('Status: Draf');
+    }
+
+    public function test_admin_can_filter_education_by_status_and_search(): void
+    {
+        $admin = User::factory()->create();
+        $this->actingAs($admin);
+
+        EducationArticle::create([
+            'title' => 'Morfologi Sekat Kanal Gambut',
+            'slug' => 'morfologi-sekat-kanal-gambut',
+            'category' => 'teknik-pencegahan',
+            'summary' => 'Desain teknis canal blocking untuk membasahi kembali kubah gambut.',
+            'content' => 'Sekat kanal mempertahankan tinggi muka air tanah.',
+            'source_name' => 'BRGM Indonesia',
+            'status' => EducationArticle::STATUS_PUBLISHED,
+            'published_at' => now()->subDay(),
+        ]);
+
+        EducationArticle::create([
+            'title' => 'Draf Peraturan Daerah Karhutla',
+            'slug' => 'draf-peraturan-daerah-karhutla',
+            'category' => 'hukum-kebijakan',
+            'summary' => 'Draf kajian hukum sanksi pembakaran di tingkat kabupaten.',
+            'content' => 'Kajian pasal tindak pidana lingkungan hidup.',
+            'source_name' => 'Biro Hukum Kalteng',
+            'status' => EducationArticle::STATUS_DRAFT,
+            'published_at' => null,
+        ]);
+
+        // Filter status published
+        $resPublished = $this->get(route('admin.education.index', ['status' => 'published']));
+        $resPublished->assertStatus(200);
+        $resPublished->assertSee('Morfologi Sekat Kanal Gambut');
+        $resPublished->assertDontSee('Draf Peraturan Daerah Karhutla');
+
+        // Filter status draft
+        $resDraft = $this->get(route('admin.education.index', ['status' => 'draft']));
+        $resDraft->assertStatus(200);
+        $resDraft->assertSee('Draf Peraturan Daerah Karhutla');
+        $resDraft->assertDontSee('Morfologi Sekat Kanal Gambut');
+
+        // Search kata kunci
+        $resSearch = $this->get(route('admin.education.index', ['q' => 'Canal Blocking']));
+        $resSearch->assertStatus(200);
+        $resSearch->assertSee('Morfologi Sekat Kanal Gambut');
+        $resSearch->assertDontSee('Draf Peraturan Daerah Karhutla');
+    }
+
+    public function test_admin_store_validates_required_fields(): void
+    {
+        $admin = User::factory()->create();
+        $this->actingAs($admin);
+
+        $response = $this->post(route('admin.education.store'), []);
+
+        $response->assertSessionHasErrors(['title', 'category', 'summary', 'content', 'status']);
+    }
+
+    public function test_admin_can_remove_image_on_update(): void
+    {
+        $admin = User::factory()->create();
+        $this->actingAs($admin);
+        Storage::fake('public');
+
+        $file = UploadedFile::fake()->image('gambar_asli.jpg', 600, 400);
+        $path = $file->store('education', 'public');
+
+        $article = EducationArticle::create([
+            'title' => 'Artikel Berilustrasi Awal',
+            'slug' => 'artikel-berilustrasi-awal',
+            'category' => 'ekosistem-gambut',
+            'summary' => 'Ringkasan artikel berilustrasi.',
+            'content' => 'Isi artikel edukasi berilustrasi lengkap.',
+            'image_path' => $path,
+            'status' => EducationArticle::STATUS_PUBLISHED,
+        ]);
+
+        Storage::disk('public')->assertExists($path);
+
+        // Update dengan mencentang remove_image
+        $updatePayload = [
+            'title' => 'Artikel Berilustrasi Awal',
+            'category' => 'ekosistem-gambut',
+            'summary' => 'Ringkasan artikel berilustrasi yang memenuhi batas panjang minimum karakter ringkasan.',
+            'content' => 'Isi artikel edukasi berilustrasi lengkap dengan penjelasan mendalam mengenai ekosistem lahan gambut.',
+            'status' => EducationArticle::STATUS_PUBLISHED,
+            'remove_image' => '1',
+        ];
+
+        $response = $this->put(route('admin.education.update', $article), $updatePayload);
+        $response->assertRedirect(route('admin.education.index'));
+
+        $article->refresh();
+        $this->assertNull($article->image_path);
+        Storage::disk('public')->assertMissing($path);
     }
 }

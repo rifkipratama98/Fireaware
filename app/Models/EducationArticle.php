@@ -58,6 +58,8 @@ class EducationArticle extends Model
         'image_path',
         'image_caption',
         'author',
+        'source_name',
+        'source_url',
         'reading_time_minutes',
         'status',
         'is_demo',
@@ -124,8 +126,19 @@ class EducationArticle extends Model
         return $query->where(function (Builder $q) use ($clean) {
             $q->where('title', 'like', "%{$clean}%")
               ->orWhere('summary', 'like', "%{$clean}%")
-              ->orWhere('content', 'like', "%{$clean}%");
+              ->orWhere('content', 'like', "%{$clean}%")
+              ->orWhere('author', 'like', "%{$clean}%")
+              ->orWhere('source_name', 'like', "%{$clean}%");
         });
+    }
+
+    public function sourceLabel(): string
+    {
+        if (filled($this->source_name) && filled($this->author)) {
+            return "{$this->author} &bull; {$this->source_name}";
+        }
+
+        return $this->source_name ?? $this->author ?? 'Tim Redaksi FireAware';
     }
 
     public function categoryLabel(): string
