@@ -24,5 +24,7 @@ class DatabaseSeeder extends Seeder
             GuideSeeder::class,
             EducationArticleSeeder::class,
         ]);
+
+        \App\Models\NotificationSetting::current();
     }
 }

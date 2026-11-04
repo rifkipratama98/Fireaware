@@ -34,6 +34,9 @@ Route::get('/edukasi/{slug}', [\App\Http\Controllers\EducationController::class,
 Route::get('/pengumuman', [\App\Http\Controllers\AnnouncementController::class, 'index'])->name('announcements.index');
 Route::get('/pengumuman/{slug}', [\App\Http\Controllers\AnnouncementController::class, 'show'])->name('announcements.show');
 
+// Endpoint JSON notifikasi browser aktif untuk masyarakat di portal publik
+Route::get('/api/notifications/active', [\App\Http\Controllers\Admin\NotificationSettingController::class, 'activePublicAlerts'])->name('notifications.active');
+
 // --- Autentikasi admin --------------------------------------------------
 Route::prefix('admin')->name('admin.')->group(function () {
     // Route login (tamu saja)
@@ -53,6 +56,9 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('announcements', \App\Http\Controllers\Admin\AnnouncementController::class);
         Route::get('/wilayah', [\App\Http\Controllers\Admin\RegionController::class, 'index'])->name('regions.index');
         Route::get('/integrasi', [\App\Http\Controllers\Admin\IntegrationController::class, 'index'])->name('integrations.index');
+        Route::post('/integrasi/sync/{source}', [\App\Http\Controllers\Admin\IntegrationController::class, 'sync'])->name('integrations.sync');
         Route::get('/notifikasi', [\App\Http\Controllers\Admin\NotificationSettingController::class, 'index'])->name('notifications.index');
+        Route::put('/notifikasi', [\App\Http\Controllers\Admin\NotificationSettingController::class, 'update'])->name('notifications.update');
+        Route::post('/notifikasi/test', [\App\Http\Controllers\Admin\NotificationSettingController::class, 'testNotification'])->name('notifications.test');
     });
 });

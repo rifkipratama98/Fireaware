@@ -27,6 +27,8 @@
 
     @include('layouts.partials.footer')
 
+    @include('partials.browser-notification-modal')
+
     @stack('scripts')
 </body>
 </html>

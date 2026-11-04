@@ -3,64 +3,131 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Models\Announcement;
-use App\Models\Hotspot;
+use App\Http\Requests\NotificationSettingRequest;
+use App\Models\NotificationLog;
+use App\Models\NotificationSetting;
+use App\Models\Province;
+use App\Services\Notifications\NotificationDispatcherService;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Illuminate\View\View;
 
 class NotificationSettingController extends Controller
 {
+    public function __construct(
+        private readonly NotificationDispatcherService $dispatcher
+    ) {
+    }
+
     /**
-     * Tampilkan konfigurasi ambang batas peringatan dini dan notifikasi.
-     * Tidak menampilkan rahasia/token autentikasi eksternal.
+     * Tampilkan halaman pengelolaan konfigurasi notifikasi dan riwayat pengiriman.
      */
-    public function index(): View
+    public function index(Request $request): View
     {
-        $thresholds = [
-            [
-                'parameter'     => 'Kualitas Udara PM2.5 (ISPU)',
-                'level'         => 'Waspada / Tidak Sehat',
-                'rule'          => 'PM2.5 > 55.4 µg/m³ (ISPU > 100)',
-                'action'        => 'Buat pengumuman level Waspada otomatis & kirim notifikasi posko',
-                'status'        => 'Aktif',
-            ],
-            [
-                'parameter'     => 'Kualitas Udara Ekstrem',
-                'level'         => 'Siaga Darurat',
-                'rule'          => 'PM2.5 > 150.4 µg/m³ (ISPU > 200 / Sangat Tidak Sehat)',
-                'action'        => 'Kibarkan banner darurat portal publik & peringatan broadcast',
-                'status'        => 'Aktif',
-            ],
-            [
-                'parameter'     => 'Klaster Titik Panas Tinggi',
-                'level'         => 'Siaga Lapangan',
-                'rule'          => 'Confidence >= 80% dan FRP > 50 MW dalam radius 5 km',
-                'action'        => 'Tandai titik merah pada peta interaktif & arsipkan ke laporan',
-                'status'        => 'Aktif',
-            ],
+        $setting = NotificationSetting::current();
+        $provinces = Province::query()->orderBy('name')->get();
+
+        $channelFilter = trim((string) $request->query('kanal', ''));
+        $statusFilter = trim((string) $request->query('status', ''));
+        $categoryFilter = trim((string) $request->query('kategori', ''));
+
+        $query = NotificationLog::query()->with('province')->latestFirst();
+
+        if ($channelFilter !== '') {
+            $query->where('channel', $channelFilter);
+        }
+
+        if ($statusFilter !== '') {
+            $query->where('status', $statusFilter);
+        }
+
+        if ($categoryFilter !== '') {
+            $query->where('category', $categoryFilter);
+        }
+
+        $logs = $query->paginate(10)->withQueryString();
+
+        $stats = [
+            'total' => NotificationLog::count(),
+            'sent' => NotificationLog::where('status', NotificationLog::STATUS_SENT)->count(),
+            'suppressed' => NotificationLog::where('status', NotificationLog::STATUS_SUPPRESSED)->count(),
+            'failed' => NotificationLog::where('status', NotificationLog::STATUS_FAILED)->count(),
         ];
 
-        $channels = [
-            [
-                'name'          => 'Email Posko Operasi',
-                'target'        => 'posko-karhutla@fireaware.id',
-                'type'          => 'Email Digest & Alert',
-                'is_active'     => true,
-            ],
-            [
-                'name'          => 'Webhook Koordinasi Lapangan',
-                'target'        => 'https://api.posko.kalimantan.go.id/v1/alert (Tersamar)',
-                'type'          => 'HTTP POST Webhook',
-                'is_active'     => false,
-            ],
-        ];
+        return view('admin.notifications.index', [
+            'setting' => $setting,
+            'provinces' => $provinces,
+            'logs' => $logs,
+            'stats' => $stats,
+            'channelFilter' => $channelFilter,
+            'statusFilter' => $statusFilter,
+            'categoryFilter' => $categoryFilter,
+        ]);
+    }
 
-        $recentTriggers = Announcement::query()
-            ->whereIn('level', [Announcement::LEVEL_WASPADA, Announcement::LEVEL_DARURAT])
-            ->where('is_active', true)
-            ->latest('published_at')
-            ->take(5)
-            ->get();
+    /**
+     * Perbarui konfigurasi notifikasi sistem, ambang batas, wilayah, dan frekuensi.
+     */
+    public function update(NotificationSettingRequest $request): RedirectResponse
+    {
+        $validated = $request->validated();
+        $setting = NotificationSetting::current();
 
-        return view('admin.notifications.index', compact('thresholds', 'channels', 'recentTriggers'));
+        $validated['is_enabled'] = $request->boolean('is_enabled');
+        $validated['browser_enabled'] = $request->boolean('browser_enabled');
+        $validated['email_enabled'] = $request->boolean('email_enabled');
+        $validated['webhook_enabled'] = $request->boolean('webhook_enabled');
+
+        $validated['notify_hotspots'] = $request->boolean('notify_hotspots');
+        $validated['notify_air_quality'] = $request->boolean('notify_air_quality');
+        $validated['notify_announcements'] = $request->boolean('notify_announcements');
+
+        $validated['quiet_hours_enabled'] = $request->boolean('quiet_hours_enabled');
+        $validated['updated_by'] = auth()->id();
+
+        // Jika wilayah pantauan tidak dicentang sama sekali, set null (berarti seluruh Kalimantan)
+        if (empty($validated['monitored_provinces'])) {
+            $validated['monitored_provinces'] = null;
+        }
+
+        $setting->update($validated);
+
+        return redirect()->route('admin.notifications.index')
+            ->with('success', 'Konfigurasi notifikasi dan aturan ambang batas keselamatan berhasil diperbarui.');
+    }
+
+    /**
+     * Jalankan uji coba pengiriman notifikasi ke kanal yang aktif.
+     */
+    public function testNotification(): RedirectResponse
+    {
+        $this->dispatcher->sendTestNotification();
+
+        return redirect()->route('admin.notifications.index')
+            ->with('success', 'Notifikasi uji coba berhasil dikirim dan dicatat pada riwayat pengiriman.');
+    }
+
+    /**
+     * Endpoint JSON publik untuk feed notifikasi peramban masyarakat (tanpa login).
+     */
+    public function activePublicAlerts(): JsonResponse
+    {
+        $alerts = $this->dispatcher->getActivePublicAlerts(5);
+
+        return response()->json([
+            'status' => 'ok',
+            'count' => $alerts->count(),
+            'data' => $alerts->map(fn (NotificationLog $log) => [
+                'id' => $log->id,
+                'title' => $log->title,
+                'message' => $log->message,
+                'category' => $log->category,
+                'level' => $log->level,
+                'province' => $log->province?->name ?? 'Seluruh Kalimantan',
+                'sent_at' => $log->sent_at?->diffForHumans() ?? 'Baru saja',
+            ]),
+        ]);
     }
 }
+

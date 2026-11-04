@@ -35,7 +35,11 @@
                 </li>
             </ul>
 
-            <div class="d-flex">
+            <div class="d-flex align-items-center gap-2">
+                <button type="button" class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-1" data-bs-toggle="modal" data-bs-target="#browserNotificationModal" title="Notifikasi Peringatan Peramban">
+                    <i class="bi bi-bell"></i>
+                    <span class="d-none d-md-inline">Peringatan</span>
+                </button>
                 <a class="btn btn-primary btn-sm px-3" href="{{ route('admin.dashboard') }}">
                     Area Admin
                 </a>

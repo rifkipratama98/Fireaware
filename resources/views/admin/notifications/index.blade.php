@@ -6,105 +6,160 @@
 @section('content')
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
         <div>
-            <h1 class="h4 mb-1 fw-bold">Konfigurasi Peringatan &amp; Notifikasi</h1>
+            <h1 class="h4 mb-1 fw-semibold text-dark">Konfigurasi Notifikasi &amp; Peringatan Dini</h1>
             <p class="text-secondary-soft mb-0">
-                Ambang batas deteksi dini bahaya asap, titik panas, dan kanal penyebaran informasi kewaspadaan.
+                Pengaturan sakelar kanal, kriteria informasi layak beritahu, wilayah pantauan, aturan frekuensi, dan riwayat pengiriman.
             </p>
         </div>
-    </div>
-
-    {{-- Ambang Batas Otomatis --}}
-    <div class="panel p-0 overflow-hidden mb-4">
-        <div class="p-3 border-bottom d-flex align-items-center justify-content-between">
-            <h2 class="h6 fw-bold mb-0">Aturan &amp; Ambang Batas Peringatan Dini</h2>
-            <span class="badge bg-mist text-primary border">Parameter Aktif</span>
-        </div>
-        <div class="table-responsive">
-            <table class="table table-hover mb-0 align-middle">
-                <thead class="table-light small">
-                    <tr>
-                        <th class="ps-3 py-3">Parameter Indikator</th>
-                        <th class="py-3">Tingkat Bahaya</th>
-                        <th class="py-3">Aturan Pemicu</th>
-                        <th class="py-3">Tindakan Sistem</th>
-                        <th class="py-3 pe-3 text-end">Status</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach ($thresholds as $t)
-                        <tr>
-                            <td class="ps-3 fw-semibold">
-                                <i class="bi bi-bell me-1 text-primary"></i>
-                                {{ $t['parameter'] }}
-                            </td>
-                            <td>
-                                <span class="badge {{ str_contains($t['level'], 'Darurat') ? 'bg-danger' : 'bg-warning' }} bg-opacity-10 {{ str_contains($t['level'], 'Darurat') ? 'text-danger' : 'text-warning' }} border">
-                                    {{ $t['level'] }}
-                                </span>
-                            </td>
-                            <td class="font-monospace small text-secondary-soft">{{ $t['rule'] }}</td>
-                            <td class="small">{{ $t['action'] }}</td>
-                            <td class="pe-3 text-end">
-                                <span class="badge bg-success bg-opacity-10 text-success border">{{ $t['status'] }}</span>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
-            </table>
+        <div class="d-flex align-items-center gap-2">
+            <form action="{{ route('admin.notifications.test') }}" method="POST" class="d-inline">
+                @csrf
+                <button type="submit" class="btn btn-outline-secondary d-inline-flex align-items-center gap-2">
+                    <i class="bi bi-broadcast"></i>
+                    <span>Kirim Notifikasi Uji Coba</span>
+                </button>
+            </form>
         </div>
     </div>
 
-    {{-- Kanal Pengiriman Notifikasi --}}
+    {{-- Penjelasan Aturan Masyarakat Tanpa Login --}}
+    <div class="alert alert-info py-2 px-3 small d-flex align-items-center gap-2 mb-4 rounded-3 border-info border-opacity-25" role="alert">
+        <i class="bi bi-shield-check fs-5 text-primary"></i>
+        <div>
+            <strong>Prinsip Notifikasi Masyarakat:</strong> Pengguna publik (Masyarakat Kalimantan) tidak memiliki akun login. Notifikasi publik disiarkan melalui peramban web (Web Notification API) saat membuka portal, tanpa menyimpan data pribadi warga di basis data.
+        </div>
+    </div>
+
+    {{-- Ringkasan Statistik Log Pengiriman --}}
     <div class="row g-3 mb-4">
-        <div class="col-lg-6">
-            <div class="panel p-3 p-md-4 h-100">
-                <h2 class="h6 fw-bold mb-3 d-flex align-items-center gap-2">
-                    <i class="bi bi-broadcast text-primary"></i>
-                    <span>Kanal Pengiriman Peringatan</span>
-                </h2>
-                <div class="list-group list-group-flush small">
-                    @foreach ($channels as $c)
-                        <div class="list-group-item d-flex align-items-center justify-content-between px-0 py-3">
-                            <div>
-                                <div class="fw-semibold">{{ $c['name'] }}</div>
-                                <div class="text-secondary-soft font-monospace">{{ $c['target'] }}</div>
-                                <div class="text-secondary-soft opacity-75">{{ $c['type'] }}</div>
-                            </div>
-                            <span class="badge {{ $c['is_active'] ? 'bg-success bg-opacity-10 text-success' : 'bg-secondary bg-opacity-10 text-secondary' }} border">
-                                {{ $c['is_active'] ? 'Aktif' : 'Nonaktif' }}
-                            </span>
-                        </div>
-                    @endforeach
+        <div class="col-6 col-md-3">
+            <div class="stat-card p-3">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="stat-icon bg-mist text-primary"><i class="bi bi-bell"></i></span>
+                    <div>
+                        <div class="stat-value">{{ $stats['total'] }}</div>
+                        <div class="stat-label text-secondary-soft">Total Evaluasi</div>
+                    </div>
                 </div>
             </div>
         </div>
-
-        {{-- Log Riwayat Peringatan Terakhir --}}
-        <div class="col-lg-6">
-            <div class="panel p-3 p-md-4 h-100">
-                <h2 class="h6 fw-bold mb-3 d-flex align-items-center gap-2">
-                    <i class="bi bi-clock-history text-primary"></i>
-                    <span>Peringatan Resmi Terakhir Yang Diterbitkan</span>
-                </h2>
-                @if ($recentTriggers->isNotEmpty())
-                    <div class="list-group list-group-flush small">
-                        @foreach ($recentTriggers as $trig)
-                            <div class="list-group-item px-0 py-2">
-                                <div class="d-flex align-items-center justify-content-between mb-1">
-                                    <span class="badge {{ $trig->levelBadgeClass() }}">{{ $trig->levelLabel() }}</span>
-                                    <span class="text-secondary-soft">{{ $trig->effectiveDate()->diffForHumans() }}</span>
-                                </div>
-                                <div class="fw-semibold">{{ $trig->title }}</div>
-                                <div class="text-secondary-soft text-truncate">{{ $trig->excerpt(100) }}</div>
-                            </div>
-                        @endforeach
+        <div class="col-6 col-md-3">
+            <div class="stat-card p-3">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="stat-icon bg-mist text-success"><i class="bi bi-send-check"></i></span>
+                    <div>
+                        <div class="stat-value text-success">{{ $stats['sent'] }}</div>
+                        <div class="stat-label text-secondary-soft">Terkirim</div>
                     </div>
-                @else
-                    <div class="text-secondary-soft small py-4 text-center">
-                        Tidak ada peringatan darurat/waspada yang aktif saat ini.
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card p-3">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="stat-icon bg-mist text-warning"><i class="bi bi-slash-circle"></i></span>
+                    <div>
+                        <div class="stat-value text-warning">{{ $stats['suppressed'] }}</div>
+                        <div class="stat-label text-secondary-soft">Ditekan Anti-Spam</div>
                     </div>
-                @endif
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="stat-card p-3">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="stat-icon bg-mist text-danger"><i class="bi bi-exclamation-octagon"></i></span>
+                    <div>
+                        <div class="stat-value text-danger">{{ $stats['failed'] }}</div>
+                        <div class="stat-label text-secondary-soft">Gagal Kirim</div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
+
+    {{-- Formulir Konfigurasi Notifikasi --}}
+    <form id="notificationSettingForm" action="{{ route('admin.notifications.update') }}" method="POST">
+        @csrf
+        @method('PUT')
+
+        <div class="row g-4 mb-4">
+            <div class="col-lg-6">
+                @include('admin.notifications._form_channels')
+            </div>
+            <div class="col-lg-6">
+                @include('admin.notifications._form_thresholds')
+            </div>
+        </div>
+
+        @include('admin.notifications._form_frequency_regions')
+    </form>
+
+
+    {{-- Bagian Riwayat Pengiriman Notifikasi --}}
+    @include('admin.notifications._history_panel')
+
+    {{-- Modal Konfirmasi Perubahan Konfigurasi Penting --}}
+    <div class="modal fade" id="saveConfirmModal" tabindex="-1" aria-labelledby="saveConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow-sm">
+                <div class="modal-header border-bottom-0 pb-0">
+                    <h5 class="modal-title fw-semibold text-dark d-flex align-items-center gap-2" id="saveConfirmModalLabel">
+                        <i class="bi bi-shield-exclamation text-primary"></i>
+                        <span>Konfirmasi Perubahan Konfigurasi Notifikasi</span>
+                    </h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Batal"></button>
+                </div>
+                <div class="modal-body py-3">
+                    <p class="mb-2 text-dark">
+                        Apakah Anda yakin ingin menerapkan perubahan aturan notifikasi dan ambang batas keselamatan ini?
+                    </p>
+                    <div class="small text-secondary-soft p-3 bg-soft rounded-2 border border-soft">
+                        <i class="bi bi-info-circle me-1"></i> Perubahan sakelar master, ambang batas pemicu, atau wilayah pantauan akan langsung berdampak pada siaran peringatan dini masyarakat dan koordinasi posko.
+                    </div>
+                </div>
+                <div class="modal-footer border-top-0 pt-0">
+                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
+                        Periksa Kembali
+                    </button>
+                    <button type="button" class="btn btn-primary d-inline-flex align-items-center gap-2" id="btnExecuteSave">
+                        <i class="bi bi-check-lg"></i>
+                        <span>Ya, Terapkan Konfigurasi</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const form = document.getElementById('notificationSettingForm');
+            const openModalBtn = document.getElementById('btnOpenSaveConfirmModal');
+            const executeSaveBtn = document.getElementById('btnExecuteSave');
+            const modalEl = document.getElementById('saveConfirmModal');
+
+            if (openModalBtn && modalEl) {
+                openModalBtn.addEventListener('click', function () {
+                    if (typeof bootstrap !== 'undefined' && bootstrap.Modal) {
+                        const bsModal = bootstrap.Modal.getOrCreateInstance(modalEl);
+                        bsModal.show();
+                    } else {
+                        if (confirm('Terapkan perubahan konfigurasi notifikasi keselamatan?')) {
+                            form.submit();
+                        }
+                    }
+                });
+            }
+
+            if (executeSaveBtn && form) {
+                executeSaveBtn.addEventListener('click', function () {
+                    executeSaveBtn.setAttribute('disabled', 'disabled');
+                    executeSaveBtn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span>Menyimpan...';
+                    form.submit();
+                });
+            }
+        });
+    </script>
+    @endpush
 @endsection

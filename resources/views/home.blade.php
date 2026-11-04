@@ -162,15 +162,44 @@
         <div class="container">
             <div class="row g-4">
                 <div class="col-lg-5">
-                    <h2 class="h4 fw-semibold mb-3">Kualitas udara</h2>
-                    <div class="empty-state py-4 px-3">
-                        <i class="bi bi-wind mb-2"></i>
-                        <p class="mb-1 fw-semibold">Data kualitas udara belum tersedia</p>
-                        <p class="small text-secondary-soft mb-0">
-                            Sumber data AQI (mis. BMKG atau OpenAQ) belum terhubung.
-                            Bagian ini akan aktif ketika sumber data tersedia.
-                        </p>
+                    <div class="d-flex align-items-center justify-content-between mb-3">
+                        <h2 class="h4 fw-semibold mb-0">Kualitas udara</h2>
+                        <a href="{{ route('air.quality') }}" class="small fw-semibold text-primary text-decoration-none">
+                            Lihat Stasiun <i class="bi bi-arrow-right"></i>
+                        </a>
                     </div>
+                    @if ($latestAirQuality)
+                        <div class="panel p-4">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <div>
+                                    <h3 class="h6 fw-semibold text-dark mb-0">{{ $latestAirQuality->station?->name ?? 'Stasiun Pemantau' }}</h3>
+                                    <span class="small text-secondary-soft">{{ $latestAirQuality->station?->province?->name ?? 'Kalimantan' }}</span>
+                                </div>
+                                <span class="badge bg-light text-primary border border-soft px-2 py-1 small fw-semibold">
+                                    {{ $latestAirQuality->aqi_category ?? 'ISPU' }}
+                                </span>
+                            </div>
+                            <div class="d-flex align-items-baseline gap-2 my-2">
+                                <span class="fs-2 fw-bold text-dark">{{ number_format($latestAirQuality->value, 1) }}</span>
+                                <span class="text-secondary-soft small">{{ $latestAirQuality->unit ?? 'µg/m³' }} (PM2.5)</span>
+                            </div>
+                            <div class="small text-secondary-soft mb-3">
+                                <i class="bi bi-clock me-1"></i> Diukur {{ $latestAirQuality->measured_at?->diffForHumans() ?? 'Baru saja' }}
+                            </div>
+                            <a href="{{ route('air.quality') }}" class="btn btn-outline-primary btn-sm w-100">
+                                Buka Grafik Tren &amp; Rekomendasi
+                            </a>
+                        </div>
+                    @else
+                        <div class="empty-state py-4 px-3">
+                            <i class="bi bi-wind mb-2"></i>
+                            <p class="mb-1 fw-semibold">Data kualitas udara belum tersedia</p>
+                            <p class="small text-secondary-soft mb-0">
+                                Sumber data AQI (mis. BMKG atau OpenAQ) belum terhubung.
+                                Bagian ini akan aktif ketika sumber data tersedia.
+                            </p>
+                        </div>
+                    @endif
                 </div>
 
                 <div class="col-lg-7" id="pengumuman">

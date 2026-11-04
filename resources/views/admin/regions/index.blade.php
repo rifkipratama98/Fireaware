@@ -55,6 +55,17 @@
             </div>
         </div>
         <div class="col-sm-6 col-lg-3">
+            <div class="stat-card p-3">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="stat-icon bg-mist text-primary"><i class="bi bi-cloud-haze2"></i></span>
+                    <div>
+                        <div class="stat-value">{{ $totals['stations'] }}</div>
+                        <div class="stat-label text-secondary-soft">Stasiun Udara Aktif</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     {{-- Tabel Wilayah --}}
     <div class="panel p-0 overflow-hidden mb-4">
@@ -118,18 +129,6 @@
                     @endforelse
                 </tbody>
             </table>
-        </div>
-    </div>
-
-            <div class="stat-card p-3">
-                <div class="d-flex align-items-center gap-3">
-                    <span class="stat-icon bg-mist text-primary"><i class="bi bi-cloud-haze2"></i></span>
-                    <div>
-                        <div class="stat-value">{{ $totals['stations'] }}</div>
-                        <div class="stat-label text-secondary-soft">Stasiun Udara Aktif</div>
-                    </div>
-                </div>
-            </div>
         </div>
     </div>
 @endsection

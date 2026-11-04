@@ -11,112 +11,121 @@
         </div>
     </div>
 
-    {{-- Status Tiga Tingkat (Koneksi, Sinkronisasi, Ketersediaan Data) --}}
+    {{-- Indikator Status --}}
     <div class="d-flex flex-wrap gap-2 mb-3">
-        {{-- Status Koneksi --}}
         @php
-            $connClass = $src['connection_status'] === 'Terkonfigurasi' ? 'status-ok' : 'status-warn';
-            $syncClass = match($src['sync_status']) {
-                'Mutakhir' => 'status-ok',
-                'Perlu Perhatian' => 'status-warn',
-                'Terlambat (> 3 hari)' => 'status-err',
+            $isConfigured = $src['is_configured'] ?? ($src['connection_status'] === 'Terkonfigurasi');
+            $connClass = $isConfigured ? 'status-ok' : 'status-warn';
+
+            $syncStatusText = is_string($src['sync_status']) ? $src['sync_status'] : 'Belum Pernah Sinkron';
+            $syncClass = match(true) {
+                str_contains($syncStatusText, 'Berhasil') || $syncStatusText === 'Mutakhir' => 'status-ok',
+                str_contains($syncStatusText, 'Timeout') || str_contains($syncStatusText, 'Perlu Perhatian') => 'status-warn',
+                str_contains($syncStatusText, 'Gagal') || str_contains($syncStatusText, 'Terlambat') => 'status-err',
                 default => 'status-empty',
             };
-            $dataClass = $src['data_status'] === 'Tersedia' ? 'status-ok' : 'status-empty';
+
+            $totalRec = $src['records_count'] ?? $src['total_records'] ?? 0;
+            $dataClass = $totalRec > 0 ? 'status-ok' : 'status-empty';
         @endphp
 
-        <span class="status-pill {{ $connClass }}" title="Status konfigurasi koneksi sumber data">
-            <i class="bi {{ $src['connection_status'] === 'Terkonfigurasi' ? 'bi-check-circle' : 'bi-exclamation-circle' }}"></i>
+        <span class="status-pill {{ $connClass }}" title="Status konfigurasi koneksi">
+            <i class="bi {{ $isConfigured ? 'bi-check-circle' : 'bi-exclamation-circle' }}"></i>
             Koneksi: {{ $src['connection_status'] }}
         </span>
 
-        <span class="status-pill {{ $syncClass }}" title="Status ketepatan waktu sinkronisasi">
+        <span class="status-pill {{ $syncClass }}" title="Status sinkronisasi terakhir">
             <i class="bi bi-clock-history"></i>
             Sinkron: {{ $src['sync_status'] }}
         </span>
 
-        <span class="status-pill {{ $dataClass }}" title="Status keberadaan rekaman di basis data">
+        <span class="status-pill {{ $dataClass }}" title="Total data tersimpan di basis data">
             <i class="bi bi-database"></i>
-            Data: {{ $src['data_status'] }} ({{ number_format($src['total_records']) }})
+            Data: {{ number_format($totalRec) }} rekaman
         </span>
     </div>
 
-    {{-- Waktu Sinkronisasi Terakhir & Data Terakhir --}}
-    <div class="bg-soft rounded-3 p-2 p-md-3 mb-3 small">
+    {{-- Waktu Sinkronisasi & Waktu Observasi Sensor --}}
+    <div class="bg-soft rounded-3 p-3 mb-3 small">
         <div class="row g-2">
             <div class="col-sm-6">
-                <div class="text-secondary-soft">Sinkronisasi Terakhir</div>
+                <div class="text-secondary-soft">Waktu Sinkronisasi Terakhir</div>
                 <div class="fw-semibold text-truncate">
-                    @if ($src['last_sync_at'])
-                        {{ $src['last_sync_at']->translatedFormat('d M Y, H:i') }}
-                        <span class="text-secondary-soft fw-normal">({{ $src['last_sync_at']->diffForHumans() }})</span>
+                    @if (!empty($src['last_sync_at']))
+                        {{ \Illuminate\Support\Carbon::parse($src['last_sync_at'])->translatedFormat('d M Y, H:i') }}
+                        <span class="text-secondary-soft fw-normal">({{ \Illuminate\Support\Carbon::parse($src['last_sync_at'])->diffForHumans() }})</span>
                     @else
-                        <span class="text-secondary-soft italic">Belum pernah sinkron</span>
+                        <span class="text-secondary-soft fst-italic">Belum pernah sinkron</span>
                     @endif
                 </div>
             </div>
             <div class="col-sm-6">
-                <div class="text-secondary-soft">Waktu Data Terakhir</div>
+                <div class="text-secondary-soft">Waktu Observasi Data</div>
                 <div class="fw-semibold text-truncate">
-                    @if ($src['last_data_at'])
-                        {{ $src['last_data_at']->translatedFormat('d M Y, H:i') }}
+                    @if (!empty($src['last_observation_at']))
+                        {{ \Illuminate\Support\Carbon::parse($src['last_observation_at'])->translatedFormat('d M Y, H:i') }}
                     @else
-                        <span class="text-secondary-soft italic">Tidak ada rekaman</span>
+                        <span class="text-secondary-soft fst-italic">Belum tersedia</span>
                     @endif
                 </div>
             </div>
+            @if (isset($src['records_added_last']) || isset($src['records_updated_last']))
+                <div class="col-12 pt-2 border-top border-soft d-flex justify-content-between align-items-center">
+                    <span class="text-secondary-soft">Batch Terakhir:</span>
+                    <span>
+                        <span class="text-success fw-semibold">+{{ $src['records_added_last'] ?? 0 }} baru</span>
+                        <span class="mx-1">&bull;</span>
+                        <span class="text-dark">{{ $src['records_updated_last'] ?? 0 }} diperbarui</span>
+                    </span>
+                </div>
+            @endif
         </div>
     </div>
 
-    {{-- Ringkasan Kesalahan Jika Ada --}}
+
+    {{-- Pesan Kesalahan / Peringatan --}}
     @if (!empty($src['errors']))
         <div class="alert alert-warning py-2 px-3 small mb-3" role="alert">
             <div class="fw-semibold mb-1 d-flex align-items-center gap-1 text-danger">
                 <i class="bi bi-exclamation-triangle-fill"></i>
-                <span>Perhatian Integrasi:</span>
+                <span>Catatan Kendala:</span>
             </div>
             <ul class="mb-0 ps-3">
                 @foreach ($src['errors'] as $err)
-                    <li>{{ $err }}</li>
+                    <li class="text-break">{{ $err }}</li>
                 @endforeach
             </ul>
         </div>
     @else
         <div class="small text-secondary-soft d-flex align-items-center gap-1 mb-3">
             <i class="bi bi-shield-check text-success"></i>
-            <span>Tidak ada kendala integrasi yang terdeteksi.</span>
+            <span>Parameter integrasi beroperasi normal tanpa kendala.</span>
         </div>
     @endif
 
-    {{-- Riwayat Sinkronisasi Terbaru --}}
-    <div class="mt-auto pt-2 border-top">
-        <div class="d-flex align-items-center justify-content-between mb-2">
-            <span class="small fw-semibold">Riwayat 7 Hari Terakhir</span>
-            <span class="small text-secondary-soft">{{ number_format($src['recent_records']) }} rekaman</span>
+    {{-- Parameter Tambahan --}}
+    @if (!empty($src['meta']))
+        <div class="mb-3 small">
+            @foreach ($src['meta'] as $metaLabel => $metaVal)
+                <div class="d-flex justify-content-between py-1 border-bottom border-soft">
+                    <span class="text-secondary-soft">{{ $metaLabel }}:</span>
+                    <span class="fw-medium text-dark">{{ $metaVal }}</span>
+                </div>
+            @endforeach
         </div>
+    @endif
 
-        @if (!empty($src['sync_history']))
-            <div class="table-responsive">
-                <table class="table table-sm table-borderless small mb-0">
-                    <tbody>
-                        @foreach (array_slice($src['sync_history'], 0, 4) as $h)
-                            <tr>
-                                <td class="text-secondary-soft p-1">
-                                    <i class="bi bi-calendar3 me-1"></i>
-                                    {{ \Illuminate\Support\Carbon::parse($h['date'])->translatedFormat('d M Y') }}
-                                </td>
-                                <td class="text-end fw-semibold p-1">
-                                    {{ number_format($h['count']) }} rekaman
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        @else
-            <div class="small text-secondary-soft py-1">
-                Belum ada rekaman pada periode 7 hari terakhir.
-            </div>
-        @endif
+    {{-- Tombol Sinkronisasi Manual --}}
+    <div class="mt-auto pt-3 border-top d-flex gap-2">
+        <button type="button"
+                class="btn btn-outline-primary btn-sm w-100 d-inline-flex align-items-center justify-content-center gap-1"
+                data-sync-trigger
+                data-sync-key="{{ $src['key'] ?? $src['id'] }}"
+                data-sync-name="{{ $src['name'] }}"
+                data-sync-provider="{{ $src['provider'] }}"
+                data-sync-configured="{{ $isConfigured ? '1' : '0' }}">
+            <i class="bi bi-arrow-repeat"></i>
+            <span>Sinkronisasi Manual</span>
+        </button>
     </div>
 </div>

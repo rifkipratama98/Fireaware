@@ -40,4 +40,17 @@ return [
         'url' => env('OPENAQ_API_URL', 'https://api.openaq.org/v3'),
     ],
 
+    'firms' => [
+        'map_key' => env('FIRMS_MAP_KEY'),
+        'url' => env('FIRMS_BASE_URL', 'https://firms.modaps.eosdis.nasa.gov/api/area/csv'),
+        'source' => env('FIRMS_SOURCE', 'VIIRS_SNPP_NRT'),
+        'area' => env('FIRMS_AREA', '108.5,-4.5,119.5,4.5'),
+        'day_range' => (int) env('FIRMS_DAY_RANGE', 1),
+    ],
+
+    'bmkg' => [
+        'karhutla_url' => env('BMKG_KARHUTLA_URL'),
+        'warning_url' => env('BMKG_WARNING_URL'),
+    ],
+
 ];

@@ -77,47 +77,55 @@
                 </div>
             </a>
         </div>
-    {{-- Navigasi Menuju Seluruh Halaman Pengelolaan (Item 10) --}}
+    </div>
+
+    {{-- Navigasi Menuju Seluruh Halaman Pengelolaan --}}
     <div class="panel p-3 p-md-4 mb-4">
         <h2 class="h6 fw-bold mb-3 d-flex align-items-center gap-2">
             <i class="bi bi-compass text-primary"></i>
             <span>Navigasi Seluruh Halaman Pengelolaan</span>
         </h2>
         <div class="row g-2 g-md-3">
-            <div class="col-6 col-md-4 col-lg-2">
+            <div class="col-6 col-md-3 col-lg">
                 <a href="{{ route('admin.dashboard') }}" class="btn btn-outline-secondary btn-sm w-100 py-2 d-flex flex-column align-items-center gap-1 active">
                     <i class="bi bi-grid fs-5"></i>
                     <span class="small fw-semibold">Dashboard</span>
                 </a>
             </div>
-            <div class="col-6 col-md-4 col-lg-2">
+            <div class="col-6 col-md-3 col-lg">
                 <a href="{{ route('admin.guides.index') }}" class="btn btn-outline-secondary btn-sm w-100 py-2 d-flex flex-column align-items-center gap-1">
                     <i class="bi bi-shield-check fs-5"></i>
                     <span class="small fw-semibold">Panduan</span>
                 </a>
             </div>
-            <div class="col-6 col-md-4 col-lg-2">
+            <div class="col-6 col-md-3 col-lg">
                 <a href="{{ route('admin.education.index') }}" class="btn btn-outline-secondary btn-sm w-100 py-2 d-flex flex-column align-items-center gap-1">
                     <i class="bi bi-mortarboard fs-5"></i>
                     <span class="small fw-semibold">Edukasi</span>
                 </a>
             </div>
-            <div class="col-6 col-md-4 col-lg-2">
+            <div class="col-6 col-md-3 col-lg">
                 <a href="{{ route('admin.announcements.index') }}" class="btn btn-outline-secondary btn-sm w-100 py-2 d-flex flex-column align-items-center gap-1">
                     <i class="bi bi-megaphone fs-5"></i>
                     <span class="small fw-semibold">Pengumuman</span>
                 </a>
             </div>
-            <div class="col-6 col-md-4 col-lg-2">
+            <div class="col-6 col-md-3 col-lg">
                 <a href="{{ route('admin.regions.index') }}" class="btn btn-outline-secondary btn-sm w-100 py-2 d-flex flex-column align-items-center gap-1">
                     <i class="bi bi-map fs-5"></i>
                     <span class="small fw-semibold">Wilayah</span>
                 </a>
             </div>
-            <div class="col-6 col-md-4 col-lg-2">
+            <div class="col-6 col-md-3 col-lg">
                 <a href="{{ route('admin.integrations.index') }}" class="btn btn-outline-secondary btn-sm w-100 py-2 d-flex flex-column align-items-center gap-1">
                     <i class="bi bi-arrow-repeat fs-5"></i>
                     <span class="small fw-semibold">Integrasi</span>
+                </a>
+            </div>
+            <div class="col-6 col-md-3 col-lg">
+                <a href="{{ route('admin.notifications.index') }}" class="btn btn-outline-secondary btn-sm w-100 py-2 d-flex flex-column align-items-center gap-1">
+                    <i class="bi bi-bell fs-5"></i>
+                    <span class="small fw-semibold">Notifikasi</span>
                 </a>
             </div>
         </div>

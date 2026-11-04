@@ -94,7 +94,7 @@ class DashboardController extends Controller
             'name'              => 'Titik Panas (Hotspot)',
             'provider'          => 'NASA FIRMS / VIIRS & MODIS',
             'icon'              => 'bi-fire',
-            'connection_status' => 'Terkonfigurasi',
+            'connection_status' => filled(config('services.firms.map_key')) ? 'Terkonfigurasi' : 'Belum Dikonfigurasi',
             'sync_status'       => $this->computeSyncStatus($syncAt),
             'data_status'       => $total > 0 ? 'Tersedia' : 'Kosong',
             'total_records'     => $total,

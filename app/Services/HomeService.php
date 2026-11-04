@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\AirQualityReading;
 use App\Models\Guide;
 use App\Models\Hotspot;
 use App\Models\Province;
@@ -62,6 +63,11 @@ class HomeService
             'announcements' => Announcement::query()->published()->orderByDesc('published_at')->limit(3)->get(),
             'safetyGuides' => SafetyGuide::query()->where('is_active', true)->orderBy('sort_order')->limit(4)->get(),
             'publishedGuides' => Guide::query()->published()->orderByDesc('published_at')->limit(4)->get(),
+            'latestAirQuality' => AirQualityReading::query()
+                ->when($activeProvince !== null, fn ($q) => $q->whereHas('station', fn ($sq) => $sq->where('province_id', $activeProvince->id)))
+                ->with(['station.province'])
+                ->orderByDesc('measured_at')
+                ->first(),
         ];
     }
 

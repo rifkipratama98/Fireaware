@@ -11,8 +11,7 @@
                     mendukung mitigasi dan respons yang lebih cepat dan tepat.
                 </p>
                 <p class="small text-secondary-soft mt-3 mb-0">
-                    <i class="bi bi-database me-1"></i> Sumber data: <span class="fw-semibold">data DEMO internal</span>
-                    (rencana integrasi: VIIRS/MODIS &amp; BMKG).
+                    <i class="bi bi-shield-check me-1"></i> Pemantauan Terpadu Kalimantan: Telemetri Hotspot Satelit, ISPU Udara &amp; Peringatan Dini BMKG.
                 </p>
             </div>
 
@@ -21,18 +20,20 @@
                 <ul class="list-unstyled d-grid gap-2 small">
                     <li><a href="{{ route('home') }}">Beranda</a></li>
                     <li><a href="{{ route('hotspot.map') }}">Peta Hotspot</a></li>
-                    <li><a href="{{ route('home') }}#hotspot-terbaru">Data Terbaru</a></li>
-                    <li><a href="{{ route('home') }}#pengumuman">Pengumuman</a></li>
-                    <li><a href="{{ route('home') }}#panduan">Panduan</a></li>
+                    <li><a href="{{ route('air.quality') }}">Kualitas Udara</a></li>
+                    <li><a href="{{ route('announcements.index') }}">Pengumuman</a></li>
+                    <li><a href="{{ route('edukasi.index') }}">Edukasi</a></li>
+                    <li><a href="{{ route('guides.index') }}">Panduan</a></li>
                 </ul>
             </div>
 
             <div class="col-6 col-md-3 col-lg-2">
                 <h6 class="fw-semibold mb-3">Informasi</h6>
                 <ul class="list-unstyled d-grid gap-2 small">
-                    <li><a href="{{ route('home') }}#panduan">Panduan Keselamatan</a></li>
-                    <li><a href="{{ route('air.quality') }}">Kualitas Udara</a></li>
-                    <li><a href="{{ route('admin.dashboard') }}">Area Admin</a></li>
+                    <li><a href="{{ route('guides.index') }}">Panduan Keselamatan</a></li>
+                    <li><a href="{{ route('edukasi.index') }}">Literasi Gambut</a></li>
+                    <li><a href="{{ route('air.quality') }}">Indeks ISPU Udara</a></li>
+                    <li><a href="{{ route('admin.dashboard') }}">Area Pengelola (Admin)</a></li>
                 </ul>
             </div>
 

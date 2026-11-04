@@ -31,6 +31,7 @@ class HomeController extends Controller
             'announcements' => $data['announcements'],
             'safetyGuides' => $data['safetyGuides'],
             'publishedGuides' => $data['publishedGuides'] ?? collect(),
+            'latestAirQuality' => $data['latestAirQuality'] ?? null,
         ]);
     }
 
