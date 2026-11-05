@@ -65,11 +65,11 @@ function initMapView() {
     const overlayError = frame.querySelector('[data-map-state="error"]');
     const overlayEmpty = frame.querySelector('[data-map-state="empty"]');
 
-    const map = L.map(mapEl, { zoomControl: true }).setView([-1.7, 114], 5);
+    const map = L.map(mapEl, { zoomControl: true }).setView([-1.5, 114.5], 6);
 
     L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors | NASA FIRMS',
     }).addTo(map);
 
     const cluster = L.markerClusterGroup({
@@ -77,6 +77,14 @@ function initMapView() {
         maxClusterRadius: 48,
     });
     map.addLayer(cluster);
+
+    // Tombol pusatkan peta
+    const recenterBtn = document.getElementById('mapRecenterBtn');
+    if (recenterBtn) {
+        recenterBtn.addEventListener('click', () => {
+            map.setView([-1.5, 114.5], 6);
+        });
+    }
 
     function setOverlay(type) {
         [overlayLoading, overlayError, overlayEmpty].forEach((el) => {
@@ -87,12 +95,33 @@ function initMapView() {
     }
 
     let activeRequest = null;
+    let lastLoadedFilter = {};
+
+    function updateStats(points) {
+        const total = points.length;
+        const high = points.filter((p) => p.confidence >= 80).length;
+        const mid = points.filter((p) => p.confidence >= 60 && p.confidence < 80).length;
+        const low = points.filter((p) => p.confidence < 60).length;
+
+        const totalEl = document.querySelector('[data-stat="total"]');
+        if (totalEl) totalEl.textContent = total.toLocaleString('id-ID');
+
+        const highEl = document.querySelector('[data-stat="high"]');
+        if (highEl) highEl.textContent = high.toLocaleString('id-ID');
+
+        const midEl = document.querySelector('[data-stat="mid"]');
+        if (midEl) midEl.textContent = mid.toLocaleString('id-ID');
+
+        const lowEl = document.querySelector('[data-stat="low"]');
+        if (lowEl) lowEl.textContent = low.toLocaleString('id-ID');
+    }
 
     async function loadData(params) {
         if (activeRequest) {
             activeRequest.abort();
         }
         activeRequest = new AbortController();
+        lastLoadedFilter = params;
         setOverlay('loading');
 
         const q = new URLSearchParams();
@@ -111,6 +140,7 @@ function initMapView() {
             const json = await res.json();
             const points = json.data || [];
             renderMarkers(points);
+            updateStats(points);
             updateMeta(json.meta || {});
             if (points.length === 0) {
                 setOverlay('empty');
@@ -122,6 +152,7 @@ function initMapView() {
             if (err.name === 'AbortError') {
                 return;
             }
+            updateStats([]);
             setOverlay('error');
         }
     }
@@ -131,17 +162,40 @@ function initMapView() {
         points.forEach((p) => {
             const cls = confidenceClass(p.confidence);
             const marker = L.circleMarker([p.lat, p.lng], {
-                radius: p.confidence >= 80 ? 8 : 6,
+                radius: p.confidence >= 80 ? 9 : 7,
                 color: '#ffffff',
-                weight: 1.5,
+                weight: 2,
                 fillColor: circleColor(cls),
-                fillOpacity: 0.85,
+                fillOpacity: 0.88,
             });
 
-            marker.bindTooltip(`${p.province ?? '?'} · ${p.confidence ?? '?'}%`, {
+            marker.bindTooltip(`<strong>${p.province ?? 'Kalimantan'}</strong> &bull; ${p.confidence ?? '?'}%`, {
                 direction: 'top',
                 opacity: 0.95,
+                className: 'custom-map-tooltip',
             });
+
+            const popupHtml = `
+                <div class="map-popup-card">
+                    <div class="d-flex align-items-center justify-content-between gap-2 mb-2 pb-1 border-bottom">
+                        <strong class="text-dark small">${p.province ?? 'Kalimantan'}</strong>
+                        <span class="conf-chip ${cls}" style="font-size: 0.72rem; padding: 0.15rem 0.5rem;">${p.confidence ?? '?'}%</span>
+                    </div>
+                    <div class="small text-secondary mb-1">
+                        <i class="bi bi-clock me-1"></i>${fmtDateTime(p.detected_at)}
+                    </div>
+                    <div class="small font-monospace text-secondary mb-1">
+                        <i class="bi bi-geo-alt me-1"></i>${fmtCoord(p.lat)}, ${fmtCoord(p.lng)}
+                    </div>
+                    ${p.frp != null ? `<div class="small text-secondary mb-1"><strong>FRP:</strong> ${Number(p.frp).toLocaleString('id-ID')} MW</div>` : ''}
+                    ${p.sensor ? `<div class="small text-secondary mb-1"><strong>Sensor:</strong> ${p.sensor}</div>` : ''}
+                    <div class="small text-secondary-soft mt-1 pt-1 border-top" style="font-size: 0.72rem;">
+                        Sumber: ${sourceLabel(p.source)}
+                    </div>
+                </div>
+            `;
+            marker.bindPopup(popupHtml, { maxWidth: 280, className: 'custom-leaflet-popup' });
+
             marker.on('click', () => showDetail(p, cls));
             cluster.addLayer(marker);
         });
@@ -182,6 +236,39 @@ function initMapView() {
         if (sourceEl) {
             sourceEl.textContent = meta.source ? sourceLabel(meta.source) : (CFG.sourceLabel || 'Data DEMO internal');
         }
+
+        // Indikator kesegaran data
+        const stalenessEl = document.querySelector('[data-slot="staleness-badge"]');
+        if (stalenessEl && meta.updated_at) {
+            const updatedTime = new Date(meta.updated_at).getTime();
+            const ageHours = (Date.now() - updatedTime) / (1000 * 60 * 60);
+            if (ageHours > 48) {
+                stalenessEl.innerHTML = `
+                    <span class="badge bg-warning bg-opacity-20 text-warning border border-warning border-opacity-25 d-inline-flex align-items-center gap-1">
+                        <i class="bi bi-clock-history"></i>Rekaman Historis
+                    </span>
+                `;
+            } else {
+                stalenessEl.innerHTML = `
+                    <span class="badge bg-success bg-opacity-15 text-success border border-success border-opacity-25 d-inline-flex align-items-center gap-1">
+                        <span class="pulse-indicator"></span>Pembaruan Terkini
+                    </span>
+                `;
+            }
+        }
+    }
+
+    // Tombol coba lagi saat error & reset saat kosong
+    const retryBtn = document.getElementById('mapRetryBtn');
+    if (retryBtn) {
+        retryBtn.addEventListener('click', () => loadData(lastLoadedFilter));
+    }
+    const emptyResetBtn = document.getElementById('mapEmptyResetBtn');
+    if (emptyResetBtn) {
+        emptyResetBtn.addEventListener('click', () => {
+            const resetBtn = document.getElementById('mapFilterReset');
+            if (resetBtn) resetBtn.click();
+        });
     }
 
     // --- Form filter ---
@@ -202,7 +289,7 @@ function initMapView() {
             pushState({ provinsi, dari, sampai });
 
             const offcanvasEl = document.getElementById('filterOffcanvas');
-            if (offcanvasEl) {
+            if (offcanvasEl && typeof bootstrap !== 'undefined' && bootstrap.Offcanvas) {
                 const inst = bootstrap.Offcanvas.getInstance(offcanvasEl);
                 if (inst) inst.hide();
             }
@@ -221,6 +308,25 @@ function initMapView() {
                 pushState({ provinsi: '', dari: '', sampai: '' });
             });
         }
+
+        // Shortcut tanggal cepat
+        const presetBtns = document.querySelectorAll('[data-date-preset]');
+        presetBtns.forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const days = parseInt(btn.dataset.datePreset, 10);
+                const toDate = new Date();
+                const fromDate = new Date();
+                fromDate.setDate(toDate.getDate() - days);
+
+                const fmt = (d) => d.toISOString().split('T')[0];
+                const selF = document.getElementById('filterFrom');
+                const selT = document.getElementById('filterTo');
+                if (selF) selF.value = fmt(fromDate);
+                if (selT) selT.value = fmt(toDate);
+
+                form.dispatchEvent(new Event('submit'));
+            });
+        });
 
         // Muat awal sesuai filter dari server (URL)
         loadData(CFG.initialFilter || {});

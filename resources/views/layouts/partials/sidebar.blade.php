@@ -2,8 +2,11 @@
 
     <div class="offcanvas-header px-3 pt-3 pb-2">
         <a class="brand sidebar-brand" href="{{ route('admin.dashboard') }}">
-            <span class="brand-mark"><i class="bi bi-tree"></i></span>
-            <span class="brand-name">FireAware<span class="brand-sub"> Admin</span></span>
+            <span class="brand-mark" aria-hidden="true"><i class="bi bi-tree-fill"></i></span>
+            <span class="brand-text d-flex flex-column lh-1">
+                <span class="brand-name text-white">FireAware</span>
+                <span class="brand-sub text-mist opacity-75">Admin Panel</span>
+            </span>
         </a>
         <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas"
                 data-bs-target="#adminSidebar" aria-label="Tutup menu"></button>
@@ -14,11 +17,11 @@
         <div class="nav flex-column">
             <a class="nav-link {{ request()->routeIs('admin.dashboard') ? 'active' : '' }}"
                href="{{ route('admin.dashboard') }}">
-                <i class="bi bi-grid"></i>Dashboard
+                <i class="bi bi-grid-1x2-fill"></i>Dashboard
             </a>
         </div>
 
-        <div class="sidebar-section-title mt-4">Konten</div>
+        <div class="sidebar-section-title mt-4">Konten Publikasi</div>
         <div class="nav flex-column">
             <a class="nav-link {{ request()->routeIs('admin.guides.*') ? 'active' : '' }}"
                href="{{ route('admin.guides.index') }}">
@@ -26,19 +29,19 @@
             </a>
             <a class="nav-link {{ request()->routeIs('admin.education.*') ? 'active' : '' }}"
                href="{{ route('admin.education.index') }}">
-                <i class="bi bi-mortarboard"></i>Edukasi
+                <i class="bi bi-mortarboard-fill"></i>Edukasi
             </a>
             <a class="nav-link {{ request()->routeIs('admin.announcements.*') ? 'active' : '' }}"
                href="{{ route('admin.announcements.index') }}">
-                <i class="bi bi-megaphone"></i>Pengumuman
+                <i class="bi bi-megaphone-fill"></i>Pengumuman
             </a>
         </div>
 
-        <div class="sidebar-section-title mt-4">Sistem</div>
+        <div class="sidebar-section-title mt-4">Sistem &amp; Pemantauan</div>
         <div class="nav flex-column">
             <a class="nav-link {{ request()->routeIs('admin.regions.*') ? 'active' : '' }}"
                href="{{ route('admin.regions.index') }}">
-                <i class="bi bi-map"></i>Informasi Wilayah
+                <i class="bi bi-map-fill"></i>Informasi Wilayah
             </a>
             <a class="nav-link {{ request()->routeIs('admin.integrations.*') ? 'active' : '' }}"
                href="{{ route('admin.integrations.index') }}">
@@ -46,7 +49,7 @@
             </a>
             <a class="nav-link {{ request()->routeIs('admin.notifications.*') ? 'active' : '' }}"
                href="{{ route('admin.notifications.index') }}">
-                <i class="bi bi-bell"></i>Konfigurasi Notifikasi
+                <i class="bi bi-bell-fill"></i>Konfigurasi Notifikasi
             </a>
         </div>
     </nav>

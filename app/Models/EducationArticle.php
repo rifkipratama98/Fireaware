@@ -179,6 +179,10 @@ class EducationArticle extends Model
             return $this->image_path;
         }
 
+        if (Str::startsWith($this->image_path, ['images/', '/images/'])) {
+            return asset(ltrim($this->image_path, '/'));
+        }
+
         return Storage::disk('public')->url($this->image_path);
     }
 

@@ -9,19 +9,21 @@
     <!-- Font Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     @vite(['resources/css/app.scss', 'resources/js/app.js'])
     @vite('resources/js/home.js')
 </head>
-<body class="d-flex flex-column min-vh-100">
+<body class="d-flex flex-column min-vh-100 site-body">
 
     @include('layouts.partials.navbar')
 
     <main class="flex-fill">
-        <div class="container mt-4">
-            @include('layouts.partials.alert')
-        </div>
+        @if (session('success') || session('error') || session('warning') || session('info') || (isset($errors) && $errors->any()))
+            <div class="container mt-4">
+                @include('layouts.partials.alert')
+            </div>
+        @endif
         @yield('content')
     </main>
 

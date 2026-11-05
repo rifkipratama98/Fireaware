@@ -162,5 +162,102 @@ class PublicPagesTest extends TestCase
         $response->assertSee('Stasiun Pontianak Kota');
         $response->assertSee('42');
         $response->assertSee('Sedang');
+
+        // Verifikasi komponen baru pada halaman Kualitas Udara yang diredesain
+        $response->assertSee('Kualitas Udara Kalimantan');
+        $response->assertSee('Sensor Terverifikasi');
+        $response->assertSee('Spektrum Tingkat Pencemaran ISPU');
+        $response->assertSee('Panduan Kategori Kualitas Udara (ISPU)');
+        $response->assertSee('Panduan Perlindungan Diri &amp; Keluarga', false);
+        $response->assertSee('Gunakan Masker Standar Partikulat');
+        $response->assertSee('Dinamika Partikel PM2.5 di Kalimantan');
+    }
+
+    public function test_air_quality_page_displays_friendly_empty_state_when_station_has_no_reading(): void
+    {
+        $prov = Province::create(['name' => 'Kalteng', 'slug' => 'kalteng']);
+        AirQualityStation::create([
+            'province_id' => $prov->id,
+            'name' => 'Stasiun Palangka Raya Mandiri',
+            'slug' => 'stasiun-palangka-raya-mandiri',
+            'source' => 'openaq',
+            'is_active' => true,
+        ]);
+
+        $response = $this->get(route('air.quality', ['stasiun' => 'stasiun-palangka-raya-mandiri']));
+
+        $response->assertStatus(200);
+        $response->assertSee('Stasiun Palangka Raya Mandiri');
+        $response->assertSee('Data Pembacaan Belum Tersedia');
+        // Pastikan konten edukasi tetap tampil meski live data belum ada
+        $response->assertSee('Panduan Kategori Kualitas Udara (ISPU)');
+        $response->assertSee('Panduan Perlindungan Diri &amp; Keluarga', false);
+    }
+
+    public function test_air_quality_page_displays_friendly_empty_state_when_no_stations(): void
+    {
+        $prov = Province::create(['name' => 'Kaltara', 'slug' => 'kaltara']);
+
+        $response = $this->get(route('air.quality', ['provinsi' => 'kaltara']));
+
+        $response->assertStatus(200);
+        $response->assertSee('Stasiun Pemantau Belum Tersedia');
+        // Pastikan konten edukasi tetap tampil ramah publik
+        $response->assertSee('Panduan Kategori Kualitas Udara (ISPU)');
+        $response->assertSee('Panduan Perlindungan Diri &amp; Keluarga', false);
+    }
+
+    public function test_air_quality_page_renders_chart_and_stats_when_history_available(): void
+    {
+        $prov = Province::create(['name' => 'Kalsel', 'slug' => 'kalsel']);
+        $station = AirQualityStation::create([
+            'province_id' => $prov->id,
+            'name' => 'Stasiun Banjarbaru',
+            'slug' => 'stasiun-banjarbaru',
+            'source' => 'openaq',
+            'is_active' => true,
+        ]);
+
+        // Buat 3 titik pembacaan berkala agar riwayat valid
+        AirQualityReading::create([
+            'air_quality_station_id' => $station->id,
+            'pollutant' => 'pm25',
+            'value' => 20.0,
+            'unit' => 'µg/m³',
+            'aqi_category' => 'Baik',
+            'measured_at' => now()->subDays(2),
+            'fetched_at' => now(),
+            'source' => 'openaq',
+        ]);
+        AirQualityReading::create([
+            'air_quality_station_id' => $station->id,
+            'pollutant' => 'pm25',
+            'value' => 35.0,
+            'unit' => 'µg/m³',
+            'aqi_category' => 'Baik',
+            'measured_at' => now()->subDay(),
+            'fetched_at' => now(),
+            'source' => 'openaq',
+        ]);
+        AirQualityReading::create([
+            'air_quality_station_id' => $station->id,
+            'pollutant' => 'pm25',
+            'value' => 50.0,
+            'unit' => 'µg/m³',
+            'aqi_category' => 'Baik',
+            'measured_at' => now()->subHours(2),
+            'fetched_at' => now(),
+            'source' => 'openaq',
+        ]);
+
+        $response = $this->get(route('air.quality', ['stasiun' => 'stasiun-banjarbaru']));
+
+        $response->assertStatus(200);
+        $response->assertSee('aqTrendChart');
+        $response->assertSee('aq-history-data');
+        $response->assertSee('Terendah:');
+        $response->assertSee('Tertinggi:');
+        $response->assertSee('Rata-rata:');
+
     }
 }

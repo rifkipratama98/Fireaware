@@ -29,7 +29,7 @@ Kebakaran pada lahan gambut terbagi menjadi dua fase:
 - **Ground Fire:** Bara api merayap lambat di kedalaman 50 sentimeter hingga beberapa meter di bawah permukaan tanah tanpa nyala api yang terlihat (smoldering combustion).
 
 Kebakaran bawah tanah inilah yang menghasilkan volume asap pekat luar biasa besar karena pembakarannya tidak sempurna (*incomplete combustion*), menghasilkan gas beracun CO, metana, dan partikel PM2.5 dalam konsentrasi berbahaya. Pemadaman dari udara dengan water bombing sering kali tidak mempan karena air hanya membasahi permukaan atas, sementara bara api di kedalaman tanah tetap menyala.",
-                'image_path' => null,
+                'image_path' => 'images/peatland-gambut.jpg',
                 'image_caption' => 'Ilustrasi struktur kedalaman lahan gambut dan kanal pengeringan.',
                 'author' => 'Tim Riset Ekologi FireAware',
                 'reading_time_minutes' => 4,
@@ -56,7 +56,7 @@ Lebih dari 99% kejadian kebakaran di Kalimantan diinisiasi oleh aktivitas manusi
 - **Kelalaian Aktivitas Harian:** Puntung rokok yang dibuang ke serasah gambut kering, pembakaran sampah tak terjaga, atau perapian pencari ikan di sepanjang sungai pedalaman.
 
 Mengendalikan pemicu antropogenik melalui penegakan hukum dan insentif ekonomi pembukaan lahan tanpa bakar (PLTB) adalah kunci utama pencegahan.",
-                'image_path' => null,
+                'image_path' => 'images/smoke-haze.jpg',
                 'image_caption' => 'Peta anomali suhu muka laut Pasifik dan hubungannya dengan curah hujan Kalimantan.',
                 'author' => 'Dr. H. Sulaiman (Pusat Studi Iklim)',
                 'reading_time_minutes' => 4,
@@ -80,7 +80,7 @@ Gambut Kalimantan mampu menyimpan karbon hingga 10 hingga 20 kali lipat dibandin
 
 ### 3. Degradasi Kualitas Air dan Perikanan Sungai
 Jelaga dan abu kebakaran yang terbawa aliran hujan ke Sungai Kapuas, Barito, dan Kahayan menyebabkan deoksigenasi air dan penurunan pH secara drastis, membunuh biota air tawar dan memutus mata pencaharian nelayan sungai tradisional.",
-                'image_path' => null,
+                'image_path' => 'images/forest-canopy.jpg',
                 'image_caption' => 'Penyelamatan satwa liar di kawasan hutan rawa yang terdampak asap.',
                 'author' => 'Divisi Konservasi Sumber Daya Alam',
                 'reading_time_minutes' => 5,
@@ -106,7 +106,7 @@ Menanam kembali jenis-jenis pohon asli hutan rawa gambut yang memiliki toleransi
 
 ### 3. Revitalization (Revitalisasi Sumber Mata Pencaharian)
 Masyarakat di sekitar kawasan gambut memerlukan alternatif ekonomi yang tidak membutuhkan pembakaran lahan (*paludikultur*), seperti budidaya madu kelulut, perikanan air tawar ramah gambut, dan pemanfaatan purun untuk kerajinan anyaman bernilai tinggi.",
-                'image_path' => null,
+                'image_path' => 'images/conservation-action.jpg',
                 'image_caption' => 'Konstruksi sekat kanal kayu untuk menahan kebasahan kubah gambut.',
                 'author' => 'Badan Restorasi Gambut & Mangrove',
                 'reading_time_minutes' => 4,

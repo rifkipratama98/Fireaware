@@ -46,12 +46,23 @@ class AirQualityController extends Controller
 
         $latest = null;
         $history = ['available' => false, 'points' => [], 'message' => null];
+        $historyStats = null;
         $category = null;
 
         if ($activeStation) {
             $result = $this->airQuality->latestForStation($activeStation);
             $latest = $result['reading'];
             $history = $this->airQuality->historyForStation($activeStation);
+
+            if ($history['available'] && count($history['points']) > 0) {
+                $values = array_column($history['points'], 'v');
+                $historyStats = [
+                    'min' => min($values),
+                    'max' => max($values),
+                    'avg' => round(array_sum($values) / count($values), 1),
+                    'count' => count($values),
+                ];
+            }
 
             if ($latest) {
                 $category = AirQualityCategory::forPm25((float) $latest->value);
@@ -65,8 +76,10 @@ class AirQualityController extends Controller
             'activeStation' => $activeStation,
             'latest' => $latest,
             'history' => $history,
+            'historyStats' => $historyStats,
             'category' => $category,
             'categoryChip' => $category ? AirQualityCategory::chipClass($category['label']) : null,
+            'allCategories' => AirQualityCategory::allCategories(),
             'isConfigured' => $this->airQuality->isConfigured(),
             'dataSourceName' => 'OpenAQ',
             'dataSourceUrl' => 'https://openaq.org/',
