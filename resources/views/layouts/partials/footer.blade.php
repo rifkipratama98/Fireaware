@@ -31,6 +31,7 @@
                     <li><a href="{{ route('announcements.index') }}">Pengumuman</a></li>
                     <li><a href="{{ route('edukasi.index') }}">Edukasi Gambut</a></li>
                     <li><a href="{{ route('guides.index') }}">Panduan Mitigasi</a></li>
+                    <li><a href="{{ route('about') }}">Tentang FireAware</a></li>
                 </ul>
             </div>
 

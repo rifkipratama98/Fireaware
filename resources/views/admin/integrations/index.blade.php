@@ -4,79 +4,124 @@
 @section('page_title', 'Integrasi Data Eksternal')
 
 @section('content')
+    {{-- Header Pemantauan Infrastruktur Data --}}
     <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-4">
         <div>
-            <h1 class="h4 mb-1 fw-semibold text-dark">Pemantauan Integrasi &amp; Pembaruan Data</h1>
-            <p class="text-secondary-soft mb-0">
-                Status konektivitas API, ketepatan sinkronisasi, dan riwayat pembaruan telemetri Karhutla Kalimantan.
+            <div class="d-flex align-items-center gap-2 small text-secondary mb-1">
+                <span>Infrastruktur Pipeline Data</span>
+                <span class="text-muted">&bull;</span>
+                <span class="badge {{ $healthMetrics['success_rate'] >= 90 ? 'badge-infra-connected' : ($healthMetrics['success_rate'] >= 70 ? 'badge-infra-stale' : 'badge-infra-failed') }} d-inline-flex align-items-center gap-1">
+                    <i class="bi {{ $healthMetrics['success_rate'] >= 90 ? 'bi-check-circle-fill' : 'bi-exclamation-triangle-fill' }}"></i>
+                    <span>{{ $healthMetrics['success_rate'] }}% Tingkat Sukses</span>
+                </span>
+                <span class="text-muted">&bull;</span>
+                <span class="text-secondary small">Latensi Rata-Rata: <strong>{{ $healthMetrics['avg_duration_ms'] }} ms</strong></span>
+            </div>
+            <h1 class="h4 mb-1 fw-bold text-dark">Pemantauan Integrasi &amp; Pembaruan Data</h1>
+            <p class="text-secondary small mb-0">
+                Pusat pengawasan konektivitas API telemetri Karhutla Kalimantan, kepatuhan jadwal sinkronisasi, dan audit aliran data satelit.
             </p>
         </div>
         <div class="d-flex align-items-center gap-2">
             <button type="button"
-                    class="btn btn-primary d-inline-flex align-items-center gap-2"
+                    class="btn btn-primary d-inline-flex align-items-center gap-2 rounded-3 shadow-xs"
                     data-sync-trigger
                     data-sync-key="all"
                     data-sync-name="Semua Sumber Data (NASA FIRMS, BMKG, Kualitas Udara)"
                     data-sync-provider="Penyedia Eksternal Gabungan"
                     data-sync-configured="1">
                 <i class="bi bi-arrow-repeat"></i>
-                <span>Sinkronkan Semua Sumber</span>
+                <span>Sinkronkan Semua Sumber Data</span>
             </button>
         </div>
     </div>
 
-    {{-- Penjelasan Aturan Status --}}
-    <div class="alert alert-info py-2 px-3 small d-flex align-items-center gap-2 mb-4 rounded-3 border-info border-opacity-25" role="alert">
-        <i class="bi bi-info-circle-fill fs-5 text-primary"></i>
-        <div>
-            <strong>Pedoman Status Data:</strong> Status integrasi membedakan <em>Koneksi</em> (apakah kredensial terkonfigurasi pada .env), <em>Sinkronisasi</em> (apakah proses penarikan data berhasil), dan <em>Ketersediaan</em> (apakah data tersimpan di basis data). Keberadaan konfigurasi tidak disamakan dengan keberhasilan integrasi.
+    {{-- Panduan Status Klasifikasi Infrastruktur --}}
+    <div class="alert alert-info py-2-5 px-3 small d-flex align-items-start gap-2 mb-4 rounded-3 border-info border-opacity-25 bg-soft" role="alert">
+        <i class="bi bi-info-circle-fill fs-5 text-primary mt-0-5 flex-shrink-0"></i>
+        <div class="lh-sm">
+            <strong class="text-dark d-block mb-1">Pedoman Status Aliran Data Telemetri:</strong>
+            <div class="d-flex flex-wrap gap-2 text-secondary" style="font-size: 0.8rem;">
+                <span><strong class="text-success"><i class="bi bi-check-circle-fill me-1"></i>Connected:</strong> Terhubung aktif, kredensial valid, data mutakhir dalam 24 jam.</span>
+                <span><strong class="text-warning"><i class="bi bi-clock-history me-1"></i>Stale:</strong> Konfigurasi aktif namun data belum diperbarui &gt; 24 jam.</span>
+                <span><strong class="text-danger"><i class="bi bi-exclamation-octagon-fill me-1"></i>Failed:</strong> Terjadi kendala HTTP, batas waktu timeout, atau parsing payload.</span>
+                <span><strong class="text-secondary"><i class="bi bi-plug me-1"></i>Disconnected:</strong> Kunci API atau URL endpoint belum disetel di file environment (.env).</span>
+            </div>
         </div>
     </div>
 
-    {{-- Kartu Ringkasan Metrik Log --}}
+    {{-- Kartu Ringkasan Metrik Infrastruktur --}}
     <div class="row g-3 mb-4">
-        <div class="col-6 col-md-3">
-            <div class="stat-card p-3">
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="stat-card p-3 h-100">
                 <div class="d-flex align-items-center gap-3">
-                    <span class="stat-icon bg-mist text-primary"><i class="bi bi-clock-history"></i></span>
+                    <span class="stat-icon bg-mist text-primary fs-5"><i class="bi bi-clock-history"></i></span>
                     <div>
-                        <div class="stat-value">{{ $stats['total'] }}</div>
-                        <div class="stat-label text-secondary-soft">Total Riwayat</div>
+                        <div class="stat-value">{{ number_format($stats['total']) }}</div>
+                        <div class="stat-label">Total Riwayat</div>
                     </div>
                 </div>
+                <div class="stat-sub mt-2 text-muted small">Log eksekusi tercatat</div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="stat-card p-3">
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="stat-card p-3 h-100">
                 <div class="d-flex align-items-center gap-3">
-                    <span class="stat-icon bg-mist text-success"><i class="bi bi-check-circle"></i></span>
+                    <span class="stat-icon bg-success bg-opacity-10 text-success fs-5"><i class="bi bi-check-circle"></i></span>
                     <div>
-                        <div class="stat-value text-success">{{ $stats['success'] }}</div>
-                        <div class="stat-label text-secondary-soft">Berhasil</div>
+                        <div class="stat-value text-success">{{ number_format($stats['success']) }}</div>
+                        <div class="stat-label">Sukses Terhubung</div>
                     </div>
                 </div>
+                <div class="stat-sub mt-2 text-muted small">Aliran data berhasil</div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="stat-card p-3">
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="stat-card p-3 h-100">
                 <div class="d-flex align-items-center gap-3">
-                    <span class="stat-icon bg-mist text-danger"><i class="bi bi-x-circle"></i></span>
+                    <span class="stat-icon bg-danger bg-opacity-10 text-danger fs-5"><i class="bi bi-exclamation-octagon"></i></span>
                     <div>
-                        <div class="stat-value text-danger">{{ $stats['failed'] }}</div>
-                        <div class="stat-label text-secondary-soft">Gagal</div>
+                        <div class="stat-value text-danger">{{ number_format($stats['failed']) }}</div>
+                        <div class="stat-label">Gagal / Error</div>
                     </div>
                 </div>
+                <div class="stat-sub mt-2 text-muted small">Kendala HTTP / payload</div>
             </div>
         </div>
-        <div class="col-6 col-md-3">
-            <div class="stat-card p-3">
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="stat-card p-3 h-100">
                 <div class="d-flex align-items-center gap-3">
-                    <span class="stat-icon bg-mist text-warning"><i class="bi bi-hourglass-split"></i></span>
+                    <span class="stat-icon bg-warning bg-opacity-10 text-warning fs-5"><i class="bi bi-hourglass-split"></i></span>
                     <div>
-                        <div class="stat-value text-warning">{{ $stats['timeout'] }}</div>
-                        <div class="stat-label text-secondary-soft">Timeout</div>
+                        <div class="stat-value text-warning">{{ number_format($stats['timeout']) }}</div>
+                        <div class="stat-label">Batas Waktu (Timeout)</div>
                     </div>
                 </div>
+                <div class="stat-sub mt-2 text-muted small">Koneksi melebihi batas</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="stat-card p-3 h-100">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="stat-icon bg-mist text-primary fs-5"><i class="bi bi-speedometer2"></i></span>
+                    <div>
+                        <div class="stat-value">{{ $healthMetrics['avg_duration_ms'] }} <span style="font-size: 0.9rem; font-weight: 500;">ms</span></div>
+                        <div class="stat-label">Latensi Rata-Rata</div>
+                    </div>
+                </div>
+                <div class="stat-sub mt-2 text-muted small">Respons time endpoint</div>
+            </div>
+        </div>
+        <div class="col-6 col-md-4 col-xl-2">
+            <div class="stat-card p-3 h-100">
+                <div class="d-flex align-items-center gap-3">
+                    <span class="stat-icon bg-secondary bg-opacity-10 text-secondary fs-5"><i class="bi bi-gear"></i></span>
+                    <div>
+                        <div class="stat-value text-secondary">{{ number_format($stats['not_configured']) }}</div>
+                        <div class="stat-label">Belum Diatur</div>
+                    </div>
+                </div>
+                <div class="stat-sub mt-2 text-muted small">Parameter env kosong</div>
             </div>
         </div>
     </div>
@@ -89,6 +134,32 @@
             </div>
         @endforeach
     </div>
+    {{-- Visualisasi Aktivitas Sinkronisasi 7 Hari --}}
+    <div class="panel p-3 p-md-4 mb-4">
+        <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+            <div>
+                <h2 class="h6 fw-bold mb-0 text-dark d-flex align-items-center gap-2">
+                    <i class="bi bi-activity text-primary"></i>
+                    <span>Aktivitas &amp; Throughput Sinkronisasi Telemetri (7 Hari Terakhir)</span>
+                </h2>
+                <p class="text-secondary small mb-0">
+                    Visualisasi volume eksekusi penarikan data berkala dan rasio keberhasilan koneksi ke server penyedia.
+                </p>
+            </div>
+            <div class="d-flex align-items-center gap-2 small">
+                <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1">
+                    <i class="bi bi-check-circle-fill me-1"></i>Sukses: {{ array_sum($chartData['success'] ?? []) }}
+                </span>
+                <span class="badge bg-danger bg-opacity-10 text-danger border border-danger border-opacity-25 px-2 py-1">
+                    <i class="bi bi-x-circle-fill me-1"></i>Kendala: {{ array_sum($chartData['failed'] ?? []) }}
+                </span>
+            </div>
+        </div>
+        <div style="height: 220px; position: relative;">
+            <canvas id="syncActivityChart"></canvas>
+        </div>
+    </div>
+
     {{-- Bagian Riwayat Sinkronisasi Data --}}
     <div class="panel p-3 p-md-4 mb-4">
         <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
@@ -234,6 +305,72 @@ php artisan fireaware:sync airquality</code></pre>
     </div>
 
     @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Inisialisasi Grafik Aktivitas Sinkronisasi 7 Hari
+            const chartCanvas = document.getElementById('syncActivityChart');
+            if (chartCanvas && typeof Chart !== 'undefined') {
+                const activityData = @json($chartData);
+                new Chart(chartCanvas, {
+                    type: 'bar',
+                    data: {
+                        labels: activityData.labels,
+                        datasets: [
+                            {
+                                label: 'Sinkronisasi Sukses',
+                                data: activityData.success,
+                                backgroundColor: '#477B59',
+                                borderRadius: 4,
+                                barPercentage: 0.6,
+                            },
+                            {
+                                label: 'Kendala / Timeout / Gagal',
+                                data: activityData.failed,
+                                backgroundColor: '#B94035',
+                                borderRadius: 4,
+                                barPercentage: 0.6,
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                labels: {
+                                    boxWidth: 12,
+                                    font: { family: 'Inter', size: 11 }
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: '#17392D',
+                                padding: 10,
+                                callbacks: {
+                                    label: function (ctx) {
+                                        return `${ctx.dataset.label}: ${ctx.parsed.y} sesi eksekusi`;
+                                    }
+                                }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                grid: { display: false },
+                                ticks: { font: { family: 'Inter', size: 11 } }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                ticks: { precision: 0, font: { family: 'Inter', size: 11 } },
+                                grid: { color: 'rgba(0,0,0,0.05)' }
+                            }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const modalEl = document.getElementById('syncConfirmModal');

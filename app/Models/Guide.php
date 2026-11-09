@@ -164,6 +164,35 @@ class Guide extends Model
     }
 
     /**
+     * Gambar thumbnail tematik yang relevan berdasarkan kategori panduan.
+     */
+    public function thumbnailImage(): string
+    {
+        return match ($this->category) {
+            'menghadapi-asap' => asset('images/smoke-haze.jpg'),
+            'mengurangi-paparan-asap' => asset('images/smoke-haze.jpg'),
+            'persiapan-saat-kualitas-udara-memburuk' => asset('images/peatland-gambut.jpg'),
+            'tindakan-ketika-melihat-indikasi-kebakaran' => asset('images/conservation-action.jpg'),
+            'cara-memperoleh-informasi-resmi' => asset('images/hero-forest.jpg'),
+            default => asset('images/forest-canopy.jpg'),
+        };
+    }
+
+    /**
+     * Keterangan/alt teks gambar thumbnail.
+     */
+    public function thumbnailAlt(): string
+    {
+        return match ($this->category) {
+            'menghadapi-asap', 'mengurangi-paparan-asap' => 'Ilustrasi kondisi kabut asap karhutla dan mitigasi kesehatan pernapasan',
+            'persiapan-saat-kualitas-udara-memburuk' => 'Ilustrasi kawasan lahan gambut dan kesiapsiagaan penurunan kualitas udara',
+            'tindakan-ketika-melihat-indikasi-kebakaran' => 'Ilustrasi patroli satgas darat dan pelaporan titik panas karhutla',
+            'cara-memperoleh-informasi-resmi' => 'Ilustrasi kawasan hutan Kalimantan dan rujukan informasi resmi terpercaya',
+            default => 'Ilustrasi tutupan kanopi hutan hujan Kalimantan',
+        };
+    }
+
+    /**
      * Status apakah artikel sudah diterbitkan.
      */
     public function isPublished(): bool

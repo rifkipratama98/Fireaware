@@ -1,0 +1,474 @@
+// =====================================================================
+// Admin Dashboard & Command Center Styling
+// =====================================================================
+
+// Penambahan variasi status-pill
+.status-pill {
+    &.status-err {
+        background-color: rgba($critical, 0.12);
+        color: shade-color($critical, 15%);
+        border: 1px solid rgba($critical, 0.3);
+    }
+}
+
+// Sidebar visual refinement
+.admin-sidebar {
+    .sidebar-section-title {
+        color: rgba(255, 255, 255, 0.45);
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        padding: 0 0.75rem;
+        margin-top: 1.25rem;
+        margin-bottom: 0.45rem;
+
+        &:first-of-type {
+            margin-top: 0.25rem;
+        }
+    }
+
+    .nav-link {
+        color: rgba(255, 255, 255, 0.75);
+        font-size: 0.88rem;
+        border-radius: 0.55rem;
+        padding: 0.55rem 0.85rem;
+        display: flex;
+        align-items: center;
+        gap: 0.7rem;
+        transition: background-color 0.15s ease, color 0.15s ease;
+
+        i {
+            font-size: 1.1rem;
+            opacity: 0.85;
+            transition: transform 0.15s ease;
+        }
+
+        &:hover {
+            color: #fff;
+            background-color: rgba(255, 255, 255, 0.08);
+
+            i {
+                transform: scale(1.08);
+            }
+        }
+
+        &.active {
+            color: #fff;
+            background-color: $primary;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+
+            i {
+                color: #A3D9B1;
+            }
+        }
+    }
+}
+
+// Pulse indicator untuk status sistem aktif
+.pulse-indicator {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: $leaf-green;
+    position: relative;
+    box-shadow: 0 0 0 0 rgba($leaf-green, 0.7);
+    animation: pulse-ring 2s infinite cubic-bezier(0.66, 0, 0, 1);
+}
+
+@keyframes pulse-ring {
+    0% {
+        box-shadow: 0 0 0 0 rgba(71, 123, 89, 0.7);
+    }
+    70% {
+        box-shadow: 0 0 0 6px rgba(71, 123, 89, 0);
+    }
+    100% {
+        box-shadow: 0 0 0 0 rgba(71, 123, 89, 0);
+    }
+}
+
+// Penyesuaian responsif kartu statistik pada dashboard
+.stat-card {
+    border-color: $border-soft;
+    transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+
+    .stat-value {
+        line-height: 1.15;
+    }
+
+    &:hover {
+        border-color: rgba($primary, 0.4);
+    }
+}
+
+// Tabel dashboard responsif & rapi
+.table {
+    th {
+        font-weight: 650;
+        background-color: #F8FAF8;
+        border-bottom-width: 1px;
+    }
+
+    td {
+        vertical-align: middle;
+        padding-top: 0.75rem;
+        padding-bottom: 0.75rem;
+    }
+}
+// =====================================================================
+// Content Management (Panduan, Edukasi, Pengumuman)
+// =====================================================================
+
+// Thumbnail dalam tabel admin
+.content-table-thumb {
+    width: 64px;
+    height: 44px;
+    object-fit: cover;
+    border-radius: 0.45rem;
+    border: 1px solid $border-soft;
+    background-color: $bg-soft;
+    flex-shrink: 0;
+    display: block;
+}
+
+.content-table-thumb-placeholder {
+    width: 64px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    border-radius: 0.45rem;
+    border: 1px dashed $border-soft;
+    background-color: $bg-soft;
+    color: $text-secondary;
+    font-size: 1.15rem;
+    flex-shrink: 0;
+}
+
+// Lencana Status Terstandar
+.badge-status-published {
+    background-color: rgba($leaf-green, 0.12) !important;
+    color: shade-color($leaf-green, 20%) !important;
+    border: 1px solid rgba($leaf-green, 0.3) !important;
+    font-weight: 600;
+}
+
+.badge-status-draft {
+    background-color: rgba($warning, 0.14) !important;
+    color: shade-color($warning, 35%) !important;
+    border: 1px solid rgba($warning, 0.35) !important;
+    font-weight: 600;
+}
+
+// Tombol Aksi Tabel
+.btn-action-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+
+    .btn-action {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 32px;
+        height: 32px;
+        min-width: 32px;
+        min-height: 32px;
+        padding: 0;
+        border-radius: 0.45rem;
+        font-size: 0.875rem;
+        transition: all 0.15s ease;
+        border: 1px solid $border-soft;
+        background-color: #fff;
+        color: $text-secondary;
+
+        &:hover {
+            color: $primary;
+            border-color: $primary;
+            background-color: $mist-green;
+        }
+
+        &.btn-action-view:hover {
+            color: #2E655A;
+            border-color: #2E655A;
+            background-color: rgba(#2E655A, 0.08);
+        }
+
+        &.btn-action-edit:hover {
+            color: $primary;
+            border-color: $primary;
+            background-color: $mist-green;
+        }
+
+        &.btn-action-delete:hover {
+            color: $critical;
+            border-color: $critical;
+            background-color: rgba($critical, 0.08);
+        }
+    }
+}
+
+// Dropzone & Image Preview Box
+.image-upload-wrapper {
+    .image-preview-box {
+        position: relative;
+        border: 1.5px solid $border-soft;
+        border-radius: 0.65rem;
+        overflow: hidden;
+        background-color: $bg-soft;
+        margin-top: 0.75rem;
+
+        img {
+            width: 100%;
+            max-height: 240px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .image-preview-info {
+            padding: 0.5rem 0.75rem;
+            background-color: #fff;
+            border-top: 1px solid $border-soft;
+            font-size: 0.78rem;
+            color: $text-secondary;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+    }
+}
+
+// =====================================================================
+// Region / Wilayah Management Styling
+// =====================================================================
+
+.region-card {
+    background-color: #fff;
+    border: 1px solid $border-soft;
+    border-radius: 0.85rem;
+    padding: 1.25rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        border-color: rgba($primary, 0.35);
+        box-shadow: 0 4px 16px rgba(23, 57, 45, 0.06);
+    }
+
+    .region-code-badge {
+        font-size: 0.72rem;
+        font-weight: 700;
+        letter-spacing: 0.05em;
+        padding: 0.2rem 0.55rem;
+        border-radius: 0.35rem;
+        background-color: $mist-green;
+        color: $primary-dark;
+        border: 1px solid rgba($primary, 0.15);
+    }
+
+    .region-coord-chip {
+        font-family: monospace;
+        font-size: 0.75rem;
+        background-color: $bg-soft;
+        padding: 0.2rem 0.5rem;
+        border-radius: 0.35rem;
+        color: $text-secondary;
+        border: 1px solid $border-soft;
+    }
+}
+
+.regional-map-container {
+    height: 340px;
+    width: 100%;
+    border-radius: 0.65rem;
+    overflow: hidden;
+    position: relative;
+    border: 1px solid $border-soft;
+    background-color: #e5ede7;
+    z-index: 1;
+}
+
+// =====================================================================
+// Infrastructure & API Telemetry Monitoring Styling
+// =====================================================================
+
+.badge-infra-connected {
+    background-color: rgba($leaf-green, 0.12) !important;
+    color: shade-color($leaf-green, 20%) !important;
+    border: 1px solid rgba($leaf-green, 0.3) !important;
+    font-weight: 650;
+    letter-spacing: 0.01em;
+}
+
+.badge-infra-failed {
+    background-color: rgba($critical, 0.12) !important;
+    color: $critical !important;
+    border: 1px solid rgba($critical, 0.3) !important;
+    font-weight: 650;
+    letter-spacing: 0.01em;
+}
+
+.badge-infra-stale {
+    background-color: rgba($warning, 0.14) !important;
+    color: shade-color($warning, 35%) !important;
+    border: 1px solid rgba($warning, 0.35) !important;
+    font-weight: 650;
+    letter-spacing: 0.01em;
+}
+
+.badge-infra-pending {
+    background-color: rgba(#2E655A, 0.12) !important;
+    color: #17392D !important;
+    border: 1px solid rgba(#2E655A, 0.3) !important;
+    font-weight: 650;
+    letter-spacing: 0.01em;
+}
+
+.badge-infra-disconnected {
+    background-color: rgba($text-secondary, 0.1) !important;
+    color: $text-secondary !important;
+    border: 1px solid rgba($text-secondary, 0.25) !important;
+    font-weight: 650;
+    letter-spacing: 0.01em;
+}
+
+.infra-source-card {
+    background-color: #fff;
+    border: 1px solid $border-soft;
+    border-radius: 0.85rem;
+    padding: 1.35rem;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover {
+        transform: translateY(-2px);
+        border-color: rgba($primary, 0.35);
+        box-shadow: 0 6px 20px rgba(23, 57, 45, 0.06);
+    }
+
+    .source-header-icon {
+        display: grid;
+        place-items: center;
+        width: 2.75rem;
+        height: 2.75rem;
+        border-radius: 0.65rem;
+        flex-shrink: 0;
+        font-size: 1.3rem;
+    }
+
+    .source-timing-grid {
+        background-color: $bg-soft;
+        border: 1px solid $border-soft;
+        border-radius: 0.6rem;
+        padding: 0.85rem 1rem;
+        font-size: 0.84rem;
+    }
+
+    .source-spec-table {
+        font-size: 0.82rem;
+        margin-bottom: 0;
+
+        td {
+            padding: 0.35rem 0;
+            border-bottom: 1px solid rgba($border-soft, 0.7);
+        }
+
+        tr:last-child td {
+            border-bottom: 0;
+        }
+    }
+}
+
+.infra-error-box {
+    background-color: rgba($critical, 0.05);
+    border: 1px solid rgba($critical, 0.25);
+    border-left: 4px solid $critical;
+    border-radius: 0.5rem;
+    padding: 0.75rem 1rem;
+    font-size: 0.82rem;
+    color: shade-color($critical, 20%);
+}
+
+.infra-chart-card {
+    background-color: #fff;
+    border: 1px solid $border-soft;
+    border-radius: 0.85rem;
+    padding: 1.35rem;
+}
+
+// =====================================================================
+// Notification Settings Styling
+// =====================================================================
+
+.notify-group-panel {
+    background-color: #fff;
+    border: 1px solid $border-soft;
+    border-radius: 0.85rem;
+    padding: 1.5rem;
+    box-shadow: 0 1px 3px rgba(23, 57, 45, 0.03);
+}
+
+.notify-switch-card {
+    background-color: $bg-soft;
+    border: 1.5px solid $border-soft;
+    border-radius: 0.75rem;
+    padding: 1rem 1.15rem;
+    transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover {
+        border-color: rgba($primary, 0.35);
+    }
+
+    &.is-active {
+        background-color: #fff;
+        border-color: $primary;
+        box-shadow: 0 2px 8px rgba(33, 77, 58, 0.06);
+    }
+}
+
+.notify-region-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.65rem;
+}
+
+.notify-region-item {
+    background-color: $bg-soft;
+    border: 1.5px solid $border-soft;
+    border-radius: 0.65rem;
+    padding: 0.75rem 0.9rem;
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+
+    &:hover {
+        border-color: rgba($primary, 0.4);
+        background-color: #fff;
+    }
+
+    .form-check-input {
+        margin-top: 0;
+        cursor: pointer;
+    }
+
+    &.is-selected {
+        background-color: #fff;
+        border-color: $primary;
+        box-shadow: 0 2px 6px rgba(33, 77, 58, 0.06);
+    }
+}
+
+
+

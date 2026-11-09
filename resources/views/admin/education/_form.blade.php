@@ -69,26 +69,33 @@
         </div>
 
         {{-- Panel Media Gambar --}}
-        <div class="panel p-4">
-            <h2 class="h6 fw-semibold mb-3 pb-2 border-bottom border-soft">Ilustrasi &amp; Gambar Artikel</h2>
+        <div class="panel p-4 mb-4">
+            <h2 class="h6 fw-semibold mb-3 pb-2 border-bottom border-soft d-flex align-items-center gap-2">
+                <i class="bi bi-image text-primary"></i>
+                <span>Ilustrasi &amp; Gambar Artikel</span>
+            </h2>
 
             @if ($isEdit && $article->imageUrl())
                 <div class="mb-3 p-3 bg-soft rounded-3 border border-soft d-flex align-items-center gap-3">
-                    <img src="{{ $article->imageUrl() }}" alt="{{ $article->title }}" style="width: 100px; height: 70px; object-fit: cover; border-radius: .4rem;">
+                    <img src="{{ $article->imageUrl() }}" alt="{{ $article->title }}" style="width: 100px; height: 70px; object-fit: cover; border-radius: .4rem;" class="shadow-xs">
                     <div class="flex-grow-1">
                         <div class="small fw-semibold text-dark">Gambar Saat Ini</div>
-                        <div class="form-check mt-1">
+                        <div class="small text-muted mb-1">{{ basename($article->image_path) }}</div>
+                        <div class="form-check">
                             <input class="form-check-input" type="checkbox" name="remove_image" id="remove_image" value="1">
                             <label class="form-check-label text-danger small" for="remove_image">
-                                Hapus gambar ini
+                                <i class="bi bi-trash me-1"></i>Hapus gambar ini saat disimpan
                             </label>
                         </div>
                     </div>
                 </div>
             @endif
 
-            <div class="mb-3">
-                <label for="image" class="form-label">Unggah File Gambar <small class="text-muted fw-normal">(JPG, PNG, WEBP, Maks. 2MB)</small></label>
+            <div class="image-upload-wrapper mb-3">
+                <label for="image" class="form-label">
+                    {{ $isEdit && $article->imageUrl() ? 'Ganti dengan Gambar Baru' : 'Pilih Berkas Gambar' }}
+                    <small class="text-muted fw-normal">(JPG, PNG, WEBP, Maks. 2MB)</small>
+                </label>
                 <input type="file"
                        name="image"
                        id="image"
@@ -97,6 +104,17 @@
                 @error('image')
                     <div class="invalid-feedback">{{ $message }}</div>
                 @enderror
+
+                {{-- Live Preview Sebelum Disimpan --}}
+                <div id="imagePreviewContainer" class="image-preview-box d-none">
+                    <img id="imagePreviewImg" src="#" alt="Pratinjau Gambar Baru">
+                    <div class="image-preview-info">
+                        <span id="imagePreviewMeta" class="fw-medium text-truncate"></span>
+                        <button type="button" class="btn btn-link text-danger btn-sm p-0 text-decoration-none" id="clearImageBtn">
+                            <i class="bi bi-x-circle me-1"></i>Batal
+                        </button>
+                    </div>
+                </div>
             </div>
 
             <div class="mb-0">
@@ -255,3 +273,44 @@
         @endif
     </div>
 </div>
+
+<script>
+    (function () {
+        const input = document.getElementById('image');
+        const container = document.getElementById('imagePreviewContainer');
+        const img = document.getElementById('imagePreviewImg');
+        const meta = document.getElementById('imagePreviewMeta');
+        const clearBtn = document.getElementById('clearImageBtn');
+
+        if (!input || !container || !img) return;
+
+        input.addEventListener('change', function () {
+            const file = this.files && this.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    img.src = e.target.result;
+                    const sizeInKB = Math.round(file.size / 1024);
+                    const sizeText = sizeInKB > 1024
+                        ? (sizeInKB / 1024).toFixed(1) + ' MB'
+                        : sizeInKB + ' KB';
+                    meta.textContent = file.name + ' (' + sizeText + ')';
+                    container.classList.remove('d-none');
+                };
+                reader.readAsDataURL(file);
+            } else {
+                container.classList.add('d-none');
+                img.src = '#';
+            }
+        });
+
+        if (clearBtn) {
+            clearBtn.addEventListener('click', function () {
+                input.value = '';
+                container.classList.add('d-none');
+                img.src = '#';
+            });
+        }
+    })();
+</script>
+

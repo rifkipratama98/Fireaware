@@ -65,9 +65,23 @@
                 <span class="text-secondary-soft">
                     Konten ini belum dipublikasikan dan terlindungi dari akses publik. URL publik akan mengembalikan respons 404 Not Found hingga Anda menerbitkannya.
                 </span>
+            </div>
+        </div>
+    @endif
+
     <div class="row g-4">
         {{-- Kolom Kiri: Isi Lengkap & Rujukan --}}
         <div class="col-lg-8">
+            {{-- Preview Gambar Tematik --}}
+            <div class="panel p-3 mb-4">
+                <img src="{{ $guide->thumbnailImage() }}"
+                     alt="{{ $guide->thumbnailAlt() }}"
+                     class="img-fluid rounded-2 w-100"
+                     style="max-height: 320px; object-fit: cover;">
+                <div class="small text-secondary-soft text-center mt-2">
+                    <i class="bi bi-image me-1"></i> {{ $guide->thumbnailAlt() }}
+                </div>
+            </div>
             <div class="panel p-4 mb-4">
                 <h2 class="h6 fw-semibold text-secondary-soft text-uppercase tracking-wider mb-2">Ringkasan / Pengantar Singkat</h2>
                 <p class="fs-6 text-dark mb-0 lh-base">
@@ -175,8 +189,3 @@
 
     @include('admin.partials.delete-modal')
 @endsection
-
-
-            </div>
-        </div>
-    @endif

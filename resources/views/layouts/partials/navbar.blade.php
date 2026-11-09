@@ -40,6 +40,10 @@
                     <a class="nav-link {{ request()->routeIs('guides.*') ? 'active' : '' }}"
                        href="{{ route('guides.index') }}">Panduan</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link {{ request()->routeIs('about*') ? 'active' : '' }}"
+                       href="{{ route('about') }}">Tentang</a>
+                </li>
             </ul>
 
             <div class="d-flex align-items-center gap-2 pt-2 pt-lg-0 border-top border-lg-0 mt-2 mt-lg-0">

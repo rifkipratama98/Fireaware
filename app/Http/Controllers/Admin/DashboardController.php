@@ -12,6 +12,7 @@ use App\Models\Hotspot;
 use App\Models\InformationItem;
 use App\Models\InformationSource;
 use App\Models\Province;
+use App\Models\SyncLog;
 use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\DB;
 use Illuminate\View\View;
@@ -21,10 +22,21 @@ class DashboardController extends Controller
     public function index(): View
     {
         return view('admin.dashboard', [
-            'contentStats'    => $this->contentStats(),
-            'regionStats'     => $this->regionStats(),
-            'integrations'    => $this->integrationStatus(),
-            'trendChart'      => $this->hotspotTrendChart(),
+            'contentStats'     => $this->contentStats(),
+            'regionStats'      => $this->regionStats(),
+            'integrations'     => $this->integrationStatus(),
+            'trendChart'       => $this->hotspotTrendChart(),
+            'recentSyncLogs'   => SyncLog::with('user')->latestFirst()->limit(8)->get(),
+            'syncStats'        => [
+                'total'          => SyncLog::count(),
+                'success'        => SyncLog::where('status', SyncLog::STATUS_SUCCESS)->count(),
+                'failed'         => SyncLog::whereIn('status', [SyncLog::STATUS_FAILED, SyncLog::STATUS_TIMEOUT])->count(),
+                'not_configured' => SyncLog::where('status', SyncLog::STATUS_NOT_CONFIGURED)->count(),
+                'last_success_at'=> SyncLog::where('status', SyncLog::STATUS_SUCCESS)->max('completed_at'),
+            ],
+            'provinceHotspots' => Province::withCount(['hotspots' => function ($q) {
+                $q->where('detected_at', '>=', now()->subDays(7));
+            }])->orderByDesc('hotspots_count')->get(),
         ]);
     }
 

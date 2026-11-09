@@ -3,28 +3,28 @@
 @section('title', 'Edukasi Karhutla & Ekosistem Gambut — FireAware Kalimantan')
 
 @section('content')
-    {{-- Header Edukasi (Magazine Hero) --}}
+    {{-- Header Edukasi (Portal Sains & Lingkungan) --}}
     <header class="edu-hero">
         <div class="container">
             <div class="row align-items-center justify-content-between g-4">
                 <div class="col-lg-8">
-                    <span class="badge-demo mb-2 text-uppercase">
-                        <i class="bi bi-mortarboard-fill me-1"></i> Pusat Literasi Kebencanaan
+                    <span class="aq-badge-header mb-2 text-uppercase">
+                        <i class="bi bi-mortarboard-fill me-1" aria-hidden="true"></i> Pusat Literasi Kebencanaan
                     </span>
                     <h1 class="guide-hero-title mb-2">Edukasi Karhutla &amp; Gambut Kalimantan</h1>
                     <p class="guide-hero-lead mb-0">
-                        Pelajari karakteristik ilmiah lahan gambut, dinamika iklim El Niño, dampak lingkungan,
-                        serta metode restorasi ekologis untuk mencegah karhutla berulang.
+                        Pelajari sains ekosistem gambut tropis Kalimantan, dinamika iklim El Niño, dampak lingkungan,
+                        serta metode restorasi hidrologis 3R untuk mitigasi kebakaran hutan dan lahan.
                     </p>
                 </div>
                 <div class="col-lg-4 text-lg-end">
-                    <div class="p-3 bg-white rounded-3 border border-soft text-start d-inline-block w-100" style="max-width: 360px;">
+                    <div class="edu-hero-fact-card text-start d-inline-block w-100 shadow-sm" style="max-width: 360px;">
                         <div class="d-flex align-items-center gap-2 mb-1">
-                            <i class="bi bi-lightbulb text-warning"></i>
-                            <span class="fw-semibold small">Tahukah Anda?</span>
+                            <i class="bi bi-lightbulb text-warning fs-6" aria-hidden="true"></i>
+                            <span class="fw-bold small text-white">Fakta Sains Gambut</span>
                         </div>
-                        <p class="small text-secondary-soft mb-0">
-                            Gambut Kalimantan dapat menyimpan air hingga 13 kali bobotnya, namun rentan mengalami <em>ground fire</em> bila dikeringkan lewat kanal buatan.
+                        <p class="small text-white-50 mb-0" style="font-size: .82rem; line-height: 1.45;">
+                            Gambut Kalimantan mampu menyimpan air hingga 13 kali bobot keringnya, namun rentan mengalami <em>ground fire</em> bila dikeringkan oleh kanal buatan.
                         </p>
                     </div>
                 </div>
@@ -82,22 +82,22 @@
 
             @if ($activeCategory || $search !== '')
                 <div class="d-flex align-items-center justify-content-between flex-wrap gap-2 pt-3 mt-3 border-top border-soft small">
-                    <div class="text-secondary-soft">
+                    <div class="text-secondary">
                         Menampilkan materi edukasi untuk:
                         @if ($activeCategory)
-                            <span class="fw-semibold text-dark">{{ $categories[$activeCategory]['name'] ?? $activeCategory }}</span>
+                            <strong class="text-dark">{{ $categories[$activeCategory]['name'] ?? $activeCategory }}</strong>
                         @endif
                         @if ($activeCategory && $search !== '')
                             <span class="mx-1">dan</span>
                         @endif
                         @if ($search !== '')
-                            kata kunci <span class="fw-semibold text-dark">"{{ $search }}"</span>
+                            kata kunci <strong class="text-dark">"{{ $search }}"</strong>
                         @endif
                         <span class="ms-1">({{ $articles->total() }} artikel)</span>
                     </div>
 
                     <a href="{{ route('edukasi.index') }}" class="text-decoration-none text-danger fw-semibold">
-                        <i class="bi bi-arrow-counterclockwise me-1"></i>Reset Filter
+                        <i class="bi bi-arrow-counterclockwise me-1" aria-hidden="true"></i>Reset Filter
                     </a>
                 </div>
             @endif
@@ -105,34 +105,37 @@
     </section>
 
     {{-- Daftar Artikel Edukasi --}}
-    <main class="section-block">
+    <main class="section-block bg-soft py-5">
         <div class="container">
             @if ($articles->isNotEmpty())
-                {{-- Artikel Unggulan (Hanya di Halaman Awal tanpa filter) --}}
+                {{-- 2. Artikel Unggulan dengan Gambar Besar (Halaman Awal tanpa filter) --}}
                 @if ($featuredArticle)
                     <article class="edu-featured-card">
                         <div class="row g-0">
                             <div class="col-lg-5">
                                 <div class="featured-img-wrap">
-                                    @if ($featuredArticle->imageUrl())
-                                        <img src="{{ $featuredArticle->imageUrl() }}" alt="{{ $featuredArticle->title }}">
-                                    @else
-                                        <div class="img-placeholder text-center p-4">
-                                            <i class="bi {{ $featuredArticle->categoryIcon() }}"></i>
-                                        </div>
-                                    @endif
+                                    <a href="{{ route('edukasi.show', $featuredArticle->slug) }}" tabindex="-1" aria-hidden="true">
+                                        <img src="{{ $featuredArticle->displayImageUrl() }}"
+                                             alt="{{ $featuredArticle->displayImageAlt() }}"
+                                             loading="lazy"
+                                             width="540"
+                                             height="340">
+                                    </a>
                                 </div>
                             </div>
                             <div class="col-lg-7">
                                 <div class="featured-body">
-                                    <div class="d-flex align-items-center gap-2 mb-2">
+                                    <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
+                                        <span class="badge bg-primary text-white py-1 px-2.5 small fw-semibold">
+                                            <i class="bi bi-star-fill me-1" aria-hidden="true"></i>Artikel Unggulan
+                                        </span>
                                         <span class="guide-category-tag">
-                                            <i class="bi {{ $featuredArticle->categoryIcon() }}"></i>
+                                            <i class="bi {{ $featuredArticle->categoryIcon() }}" aria-hidden="true"></i>
                                             {{ $featuredArticle->categoryLabel() }}
                                         </span>
-                                        <span class="text-secondary-soft small">&bull;</span>
-                                        <span class="text-secondary-soft small">
-                                            <i class="bi bi-clock me-1"></i>{{ $featuredArticle->reading_time_minutes }} menit baca
+                                        <span class="text-secondary small">&bull;</span>
+                                        <span class="text-secondary small">
+                                            <i class="bi bi-clock me-1" aria-hidden="true"></i>{{ $featuredArticle->reading_time_minutes }} menit baca
                                         </span>
                                         @if ($featuredArticle->is_demo)
                                             <span class="badge-demo">DEMO</span>
@@ -145,11 +148,11 @@
                                         </a>
                                     </h2>
 
-                                    <p class="text-secondary-soft mb-3" style="line-height: 1.65;">
+                                    <p class="text-secondary mb-3" style="line-height: 1.65;">
                                         {{ $featuredArticle->summary }}
                                     </p>
 
-                                    <div class="d-flex align-items-center justify-content-between pt-3 border-top border-soft">
+                                    <div class="d-flex align-items-center justify-content-between pt-3 border-top border-soft flex-wrap gap-2">
                                         <div class="small text-secondary">
                                             <span>Oleh: <strong>{{ $featuredArticle->author ?? 'Tim Redaksi FireAware' }}</strong></span>
                                             <span class="mx-1">&bull;</span>
@@ -157,7 +160,7 @@
                                         </div>
 
                                         <a href="{{ route('edukasi.show', $featuredArticle->slug) }}" class="btn btn-primary btn-sm px-3">
-                                            Baca Artikel <i class="bi bi-arrow-right ms-1"></i>
+                                            Baca Artikel Lengkap <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
                                         </a>
                                     </div>
                                 </div>
@@ -166,7 +169,7 @@
                     </article>
                 @endif
 
-                {{-- Grid Artikel Edukasi --}}
+                {{-- 3 & 4. Grid Artikel Edukasi dengan Thumbnail Tematik --}}
                 <div class="row g-4">
                     @foreach ($articles as $article)
                         @if ($featuredArticle && $article->id === $featuredArticle->id)
@@ -175,28 +178,26 @@
 
                         <div class="col-md-6 col-lg-4">
                             <article class="edu-card">
-                                <div class="edu-thumb">
+                                <a href="{{ route('edukasi.show', $article->slug) }}" class="edu-thumb" tabindex="-1" aria-hidden="true">
                                     <span class="thumb-tag">
-                                        <i class="bi {{ $article->categoryIcon() }} me-1"></i>
+                                        <i class="bi {{ $article->categoryIcon() }} me-1" aria-hidden="true"></i>
                                         {{ $article->categoryLabel() }}
                                     </span>
 
-                                    @if ($article->imageUrl())
-                                        <img src="{{ $article->imageUrl() }}" alt="{{ $article->title }}" loading="lazy">
-                                    @else
-                                        <div class="thumb-placeholder">
-                                            <i class="bi {{ $article->categoryIcon() }}"></i>
-                                        </div>
-                                    @endif
-                                </div>
+                                    <img src="{{ $article->displayImageUrl() }}"
+                                         alt="{{ $article->displayImageAlt() }}"
+                                         loading="lazy"
+                                         width="360"
+                                         height="195">
+                                </a>
 
                                 <div class="edu-card-body">
-                                    <div class="d-flex align-items-center gap-2 mb-2 small text-secondary-soft">
+                                    <div class="d-flex align-items-center gap-2 mb-2 small text-secondary">
                                         <time datetime="{{ $article->effectiveDate()->toIso8601String() }}">
-                                            {{ $article->effectiveDate()->isoFormat('D MMM Y') }}
+                                            <i class="bi bi-calendar3 me-1" aria-hidden="true"></i>{{ $article->effectiveDate()->isoFormat('D MMM Y') }}
                                         </time>
                                         <span>&bull;</span>
-                                        <span><i class="bi bi-clock me-1"></i>{{ $article->reading_time_minutes }} mnt</span>
+                                        <span><i class="bi bi-clock me-1" aria-hidden="true"></i>{{ $article->reading_time_minutes }} mnt</span>
                                         @if ($article->is_demo)
                                             <span class="badge-demo py-0 px-2 ms-auto">DEMO</span>
                                         @endif
@@ -209,15 +210,15 @@
                                     </h3>
 
                                     <p class="edu-card-summary">
-                                        {{ Str::limit($article->summary, 130) }}
+                                        {{ Str::limit($article->summary, 140) }}
                                     </p>
 
                                     <div class="edu-card-footer">
-                                        <span class="text-truncate" style="max-width: 160px;">
-                                            <i class="bi bi-person me-1"></i>{{ $article->author ?? 'Redaksi' }}
+                                        <span class="text-truncate text-secondary" style="max-width: 170px;">
+                                            <i class="bi bi-person me-1" aria-hidden="true"></i>{{ $article->author ?? 'Tim Redaksi' }}
                                         </span>
                                         <a href="{{ route('edukasi.show', $article->slug) }}" class="fw-semibold text-primary text-decoration-none">
-                                            Baca <i class="bi bi-arrow-right"></i>
+                                            Baca Selengkapnya <i class="bi bi-arrow-right ms-1" aria-hidden="true"></i>
                                         </a>
                                     </div>
                                 </div>
@@ -226,7 +227,7 @@
                     @endforeach
                 </div>
 
-                {{-- Pagination --}}
+                {{-- 8. Pagination --}}
                 @if ($articles->hasPages())
                     <div class="d-flex justify-content-center mt-5">
                         {{ $articles->links('pagination::bootstrap-5') }}
@@ -236,10 +237,10 @@
                 {{-- Empty State Edukasi --}}
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
-                        <div class="empty-state text-center py-5 px-4 bg-white">
-                            <i class="bi bi-journal-album mb-3 text-secondary-soft" style="font-size: 2.5rem;"></i>
-                            <h3 class="h5 fw-semibold mb-2">Tidak Ada Materi Edukasi yang Ditemukan</h3>
-                            <p class="text-secondary-soft small mb-4 mx-auto" style="max-width: 480px;">
+                        <div class="empty-state text-center py-5 px-4 bg-white rounded-3 border border-soft shadow-sm">
+                            <i class="bi bi-journal-album mb-3 text-secondary" style="font-size: 3rem;" aria-hidden="true"></i>
+                            <h3 class="h5 fw-bold mb-2">Tidak Ada Materi Edukasi yang Ditemukan</h3>
+                            <p class="text-secondary small mb-4 mx-auto" style="max-width: 480px;">
                                 @if ($search !== '' || $activeCategory)
                                     Tidak ada artikel edukasi yang cocok dengan kata kunci atau filter topik yang dipilih.
                                 @else
@@ -248,7 +249,7 @@
                             </p>
                             @if ($search !== '' || $activeCategory)
                                 <a href="{{ route('edukasi.index') }}" class="btn btn-primary btn-sm px-4">
-                                    <i class="bi bi-arrow-left me-1"></i> Tampilkan Semua Topik
+                                    <i class="bi bi-arrow-left me-1" aria-hidden="true"></i> Tampilkan Semua Topik
                                 </a>
                             @endif
                         </div>

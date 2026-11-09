@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', $guide->title . ' — Panduan Keselamatan FireAware')
+@section('title', $guide->title . ' — Panduan Keselamatan FireAware Kalimantan')
 
 @section('content')
     {{-- Header Artikel (Editorial Header) --}}
@@ -11,7 +11,7 @@
                     {{-- Navigasi Kembali --}}
                     <div>
                         <a href="{{ route('guides.index', ['kategori' => $guide->category]) }}" class="guide-back-nav">
-                            <i class="bi bi-arrow-left"></i> Kembali ke Panduan {{ $guide->categoryLabel() }}
+                            <i class="bi bi-arrow-left me-1"></i> Kembali ke Panduan {{ $guide->categoryLabel() }}
                         </a>
                     </div>
 
@@ -19,12 +19,12 @@
                     <div class="d-flex align-items-center gap-2 mb-2 flex-wrap">
                         <a href="{{ route('guides.index', ['kategori' => $guide->category]) }}"
                            class="guide-category-tag">
-                            <i class="bi {{ $guide->categoryIcon() }}"></i>
+                            <i class="bi {{ $guide->categoryIcon() }}" aria-hidden="true"></i>
                             {{ $guide->categoryLabel() }}
                         </a>
-                        <span class="text-secondary-soft small">&bull;</span>
-                        <span class="text-secondary-soft small">
-                            <i class="bi bi-clock me-1"></i>{{ $guide->reading_time_minutes }} menit baca
+                        <span class="text-secondary small">&bull;</span>
+                        <span class="text-secondary small">
+                            <i class="bi bi-clock me-1" aria-hidden="true"></i>{{ $guide->reading_time_minutes }} menit baca
                         </span>
                     </div>
 
@@ -36,7 +36,7 @@
                     {{-- Metadata Publikasi & Sumber --}}
                     <div class="guide-detail-meta">
                         <div>
-                            <span class="text-secondary-soft">Diterbitkan:</span>
+                            <span class="text-secondary">Diterbitkan:</span>
                             <strong class="text-dark ms-1">
                                 {{ $guide->effectiveDate()->isoFormat('D MMMM Y') }}
                             </strong>
@@ -44,7 +44,7 @@
 
                         @if ($guide->updated_at && $guide->updated_at->gt($guide->effectiveDate()->addDay()))
                             <div>
-                                <span class="text-secondary-soft">Pembaruan:</span>
+                                <span class="text-secondary">Pembaruan:</span>
                                 <strong class="text-dark ms-1">
                                     {{ $guide->updated_at->isoFormat('D MMMM Y') }}
                                 </strong>
@@ -52,9 +52,9 @@
                         @endif
 
                         <div class="d-flex align-items-center gap-1">
-                            <i class="bi bi-shield-check text-success"></i>
-                            <span class="text-secondary-soft">Rujukan:</span>
-                            <span class="fw-semibold text-dark ms-1">{{ $guide->source_name }}</span>
+                            <i class="bi bi-patch-check-fill text-success" aria-hidden="true"></i>
+                            <span class="text-secondary">Rujukan Resmi:</span>
+                            <span class="fw-bold text-dark ms-1">{{ $guide->source_name }}</span>
                         </div>
                     </div>
 
@@ -72,11 +72,24 @@
         <div class="container">
             <div class="guide-prose-container">
 
+                {{-- 8 & 9. Foto Utama Dokumentasi Lingkungan / Panduan --}}
+                <div class="guide-detail-photo">
+                    <img src="{{ $guide->thumbnailImage() }}"
+                         alt="{{ $guide->thumbnailAlt() }}"
+                         loading="lazy"
+                         width="760"
+                         height="320">
+                    <div class="photo-caption">
+                        <i class="bi bi-camera me-1" aria-hidden="true"></i>
+                        {{ $guide->thumbnailAlt() }} — Materi edukasi mitigasi karhutla Kalimantan.
+                    </div>
+                </div>
+
                 {{-- Banner Peringatan Keselamatan Khusus untuk Indikasi Kebakaran --}}
                 @if ($guide->category === 'tindakan-ketika-melihat-indikasi-kebakaran' || Str::contains(strtolower($guide->title), ['kebakaran', 'titik api', 'lapor']))
-                    <div class="safety-callout safety-danger">
+                    <div class="safety-callout safety-danger mb-4">
                         <div class="safety-callout-icon">
-                            <i class="bi bi-exclamation-octagon-fill"></i>
+                            <i class="bi bi-exclamation-octagon-fill" aria-hidden="true"></i>
                         </div>
                         <div class="safety-callout-body">
                             <h4>Peringatan Keselamatan Nyawa</h4>
@@ -89,18 +102,47 @@
                     </div>
                 @endif
 
+                {{-- 6. Ekstraksi Daftar Isi (Table of Contents) --}}
+                @php
+                    $paragraphs = $guide->contentParagraphs();
+                    $toc = [];
+                    foreach ($paragraphs as $idx => $p) {
+                        if (Str::startsWith($p, '### ') || Str::startsWith($p, '## ')) {
+                            $hText = Str::startsWith($p, '### ') ? Str::after($p, '### ') : Str::after($p, '## ');
+                            $toc[] = [
+                                'title' => trim($hText),
+                                'anchor' => 'bagian-' . ($idx + 1),
+                                'level' => Str::startsWith($p, '## ') ? 2 : 3,
+                            ];
+                        }
+                    }
+                @endphp
+
+                {{-- Komponen Daftar Isi jika artikel memiliki beberapa bagian --}}
+                @if (count($toc) >= 2)
+                    <div class="guide-toc-card">
+                        <div class="toc-title">
+                            <i class="bi bi-list-nested text-primary" aria-hidden="true"></i>
+                            <span>Daftar Isi Panduan</span>
+                            <span class="badge bg-light text-secondary border border-soft ms-auto small fw-normal">{{ count($toc) }} Bagian</span>
+                        </div>
+                        <ol>
+                            @foreach ($toc as $item)
+                                <li>
+                                    <a href="#{{ $item['anchor'] }}">{{ $item['title'] }}</a>
+                                </li>
+                            @endforeach
+                        </ol>
+                    </div>
+                @endif
+
                 {{-- Badan Artikel --}}
                 <article class="guide-prose">
-                    @php
-                        // Pemecahan paragraf dan markdown formatting sederhana yang aman
-                        $paragraphs = $guide->contentParagraphs();
-                    @endphp
-
                     @foreach ($paragraphs as $para)
                         @if (Str::startsWith($para, '### '))
-                            <h3>{{ Str::after($para, '### ') }}</h3>
+                            <h3 id="bagian-{{ $loop->index + 1 }}">{{ Str::after($para, '### ') }}</h3>
                         @elseif (Str::startsWith($para, '## '))
-                            <h2>{{ Str::after($para, '## ') }}</h2>
+                            <h2 id="bagian-{{ $loop->index + 1 }}">{{ Str::after($para, '## ') }}</h2>
                         @elseif (Str::startsWith($para, '> '))
                             <blockquote>
                                 {!! nl2br(e(Str::after($para, '> '))) !!}
@@ -200,24 +242,35 @@
                             @foreach ($relatedGuides as $related)
                                 <div class="col-md-4">
                                     <article class="guide-related-card">
-                                        <div>
-                                            <span class="guide-category-tag mb-2 d-inline-block">
-                                                {{ $related->categoryLabel() }}
-                                            </span>
-                                            <h3 class="related-title">
-                                                <a href="{{ route('guides.show', $related->slug) }}">
-                                                    {{ $related->title }}
-                                                </a>
-                                            </h3>
-                                        </div>
-
-                                        <div class="related-meta">
-                                            <span>
-                                                <i class="bi bi-clock me-1"></i>{{ $related->reading_time_minutes }} menit
-                                            </span>
-                                            <a href="{{ route('guides.show', $related->slug) }}" class="text-primary text-decoration-none fw-semibold">
-                                                Baca <i class="bi bi-arrow-right"></i>
+                                        <div class="related-img-wrap">
+                                            <a href="{{ route('guides.show', $related->slug) }}" tabindex="-1" aria-hidden="true">
+                                                <img src="{{ $related->thumbnailImage() }}"
+                                                     alt="{{ $related->thumbnailAlt() }}"
+                                                     loading="lazy"
+                                                     width="320"
+                                                     height="140">
                                             </a>
+                                        </div>
+                                        <div class="related-body">
+                                            <div>
+                                                <span class="guide-category-tag mb-2 d-inline-block">
+                                                    {{ $related->categoryLabel() }}
+                                                </span>
+                                                <h3 class="related-title">
+                                                    <a href="{{ route('guides.show', $related->slug) }}">
+                                                        {{ $related->title }}
+                                                    </a>
+                                                </h3>
+                                            </div>
+
+                                            <div class="related-meta">
+                                                <span>
+                                                    <i class="bi bi-clock me-1" aria-hidden="true"></i>{{ $related->reading_time_minutes }} menit
+                                                </span>
+                                                <a href="{{ route('guides.show', $related->slug) }}" class="text-primary text-decoration-none fw-semibold">
+                                                    Baca <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                                                </a>
+                                            </div>
                                         </div>
                                     </article>
                                 </div>

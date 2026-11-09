@@ -115,17 +115,23 @@
                 <table class="table align-middle mb-0">
                     <thead class="bg-soft">
                         <tr>
+                            <th scope="col" style="width: 80px;" class="ps-3 text-center">Visual</th>
                             <th scope="col" style="min-width: 280px;">Judul &amp; Penulis</th>
-                            <th scope="col">Kategori</th>
-                            <th scope="col" class="text-center">Gambar</th>
-                            <th scope="col" class="text-center">Status</th>
-                            <th scope="col">Waktu Terbit</th>
-                            <th scope="col" class="text-end" style="min-width: 140px;">Aksi</th>
+                            <th scope="col" style="min-width: 160px;">Kategori</th>
+                            <th scope="col" class="text-center" style="width: 120px;">Status</th>
+                            <th scope="col" style="width: 130px;">Waktu Terbit</th>
+                            <th scope="col" class="text-end pe-3" style="width: 120px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($articles as $art)
                             <tr>
+                                <td class="ps-3 text-center">
+                                    <img src="{{ $art->imageUrl() ?? $art->displayImageUrl() }}"
+                                         alt="{{ $art->displayImageAlt() }}"
+                                         class="content-table-thumb shadow-xs"
+                                         loading="lazy">
+                                </td>
                                 <td>
                                     <a href="{{ route('admin.education.show', $art) }}" class="fw-semibold text-dark text-decoration-none d-block mb-1">
                                         {{ $art->title }}
@@ -135,7 +141,7 @@
                                     </a>
                                     <div class="small text-secondary-soft">
                                         @if ($art->source_name)
-                                            <span class="text-dark">{{ $art->source_name }}</span>
+                                            <span class="text-dark fw-medium">{{ $art->source_name }}</span>
                                             @if ($art->author)
                                                 &bull; <span class="text-secondary-soft">{{ $art->author }}</span>
                                             @endif
@@ -151,47 +157,40 @@
                                     </span>
                                 </td>
                                 <td class="text-center">
-                                    @if ($art->imageUrl())
-                                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25">
-                                            <i class="bi bi-image"></i> Ada
-                                        </span>
-                                    @else
-                                        <span class="text-muted small">—</span>
-                                    @endif
-                                </td>
-                                <td class="text-center">
                                     @if ($art->status === 'published')
-                                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1">
-                                            <i class="bi bi-check-circle me-1"></i> Published
+                                        <span class="badge badge-status-published d-inline-flex align-items-center gap-1 px-2 py-1">
+                                            <i class="bi bi-check-circle-fill"></i>
+                                            <span>Published</span>
                                         </span>
                                     @else
-                                        <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-2 py-1">
-                                            <i class="bi bi-clock me-1"></i> Draft
+                                        <span class="badge badge-status-draft d-inline-flex align-items-center gap-1 px-2 py-1">
+                                            <i class="bi bi-clock"></i>
+                                            <span>Draft</span>
                                         </span>
                                     @endif
                                 </td>
                                 <td>
-                                    <div class="small text-secondary-soft">
+                                    <div class="small text-secondary-soft fw-medium">
                                         {{ $art->effectiveDate()->isoFormat('D MMM Y') }}
                                     </div>
                                     <div class="small text-muted" style="font-size: .75rem;">
-                                        {{ $art->reading_time_minutes }} menit baca
+                                        <i class="bi bi-clock me-1"></i>{{ $art->reading_time_minutes }} mnt baca
                                     </div>
                                 </td>
-                                <td class="text-end">
-                                    <div class="btn-group btn-group-sm" role="group" aria-label="Aksi">
+                                <td class="text-end pe-3">
+                                    <div class="btn-action-group" role="group" aria-label="Aksi">
                                         <a href="{{ route('admin.education.show', $art) }}"
-                                           class="btn btn-outline-secondary"
+                                           class="btn-action btn-action-view"
                                            title="Lihat Detail Artikel">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                         <a href="{{ route('admin.education.edit', $art) }}"
-                                           class="btn btn-outline-secondary"
+                                           class="btn-action btn-action-edit"
                                            title="Edit Artikel">
                                             <i class="bi bi-pencil"></i>
                                         </a>
                                         <button type="button"
-                                                class="btn btn-outline-danger"
+                                                class="btn-action btn-action-delete"
                                                 data-delete-url="{{ route('admin.education.destroy', $art) }}"
                                                 data-delete-title="{{ $art->title }}"
                                                 data-delete-type="artikel edukasi"

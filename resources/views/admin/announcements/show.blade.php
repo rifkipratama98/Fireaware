@@ -69,6 +69,10 @@
                 <span class="text-secondary-soft">
                     Pengumuman ini berstatus draf. URL publik <code>/pengumuman/{{ $announcement->slug }}</code> akan merespons 404 Not Found hingga status diubah menjadi Published.
                 </span>
+            </div>
+        </div>
+    @endif
+
     <div class="row g-4">
         {{-- Kolom Kiri: Isi Pengumuman & Sumber --}}
         <div class="col-lg-8">
@@ -124,10 +128,6 @@
                 </div>
             </div>
         </div>
-
-            </div>
-        </div>
-    @endif
 
         {{-- Kolom Kanan: Metadata & Status --}}
         <div class="col-lg-4">

@@ -1,31 +1,49 @@
 @extends('layouts.app')
 
-@section('title', 'Panduan Keselamatan — FireAware Kalimantan')
+@section('title', 'Panduan Keselamatan Asap & Karhutla — FireAware Kalimantan')
 
 @section('content')
-    {{-- Header / Hero Panduan --}}
+    {{-- Header / Hero Panduan dengan Foto Hutan & Edukasi Lingkungan --}}
     <header class="guide-hero">
         <div class="container">
             <div class="row align-items-center justify-content-between g-4">
-                <div class="col-lg-8">
-                    <span class="badge-demo mb-2 text-uppercase">
-                        <i class="bi bi-shield-shaded me-1"></i> Literasi Mitigasi Karhutla
+                <div class="col-lg-7">
+                    <span class="aq-badge-header mb-2 text-uppercase">
+                        <i class="bi bi-shield-shaded me-1" aria-hidden="true"></i> Literasi Mitigasi Karhutla
                     </span>
                     <h1 class="guide-hero-title mb-2">Panduan Keselamatan Asap &amp; Karhutla</h1>
-                    <p class="guide-hero-lead mb-0">
+                    <p class="guide-hero-lead mb-3">
                         Prosedur perlindungan pernapasan, kesiapsiagaan keluarga, dan protokol pelaporan
-                        berbasis rujukan kesehatan dan kebencanaan untuk masyarakat Kalimantan.
+                        berbasis rujukan resmi kesehatan dan kebencanaan untuk masyarakat Kalimantan.
                     </p>
+
+                    <div class="d-flex flex-wrap gap-2">
+                        <span class="badge bg-light text-primary border border-soft py-1 px-2.5 small fw-semibold">
+                            <i class="bi bi-shield-check text-success me-1" aria-hidden="true"></i> Rujukan Kemenkes &amp; BNPB
+                        </span>
+                        <span class="badge bg-light text-primary border border-soft py-1 px-2.5 small fw-semibold">
+                            <i class="bi bi-check-circle-fill text-success me-1" aria-hidden="true"></i> Bebas Akses untuk Warga
+                        </span>
+                    </div>
                 </div>
-                <div class="col-lg-4 text-lg-end">
-                    <div class="p-3 bg-soft rounded-3 border border-soft text-start d-inline-block w-100" style="max-width: 360px;">
-                        <div class="d-flex align-items-center gap-2 mb-1">
-                            <i class="bi bi-info-circle text-primary"></i>
-                            <span class="fw-semibold small">Prinsip Keselamatan</span>
+
+                <div class="col-lg-5 col-xl-4 text-lg-end">
+                    <div class="guide-hero-card text-start d-inline-block w-100 shadow-sm">
+                        <img src="{{ asset('images/forest-canopy.jpg') }}"
+                             alt="Tutupan kanopi hutan hujan tropis Kalimantan"
+                             class="guide-hero-img"
+                             loading="lazy"
+                             width="480"
+                             height="180">
+                        <div class="guide-hero-card-body">
+                            <div class="d-flex align-items-center gap-2 mb-1">
+                                <i class="bi bi-shield-check text-success fs-6" aria-hidden="true"></i>
+                                <span class="fw-bold small text-white">Prinsip Keselamatan Utama</span>
+                            </div>
+                            <p class="small text-white-50 mb-0" style="font-size: .82rem; line-height: 1.45;">
+                                Utamakan keselamatan jiwa dan perlindungan napas. Hindari mendekati api atau mencoba memadamkan kebakaran lahan secara mandiri.
+                            </p>
                         </div>
-                        <p class="small text-secondary-soft mb-0">
-                            Utamakan evakuasi diri dan perlindungan napas. Hindari mendekati api atau memadamkan kebakaran lahan secara mandiri.
-                        </p>
                     </div>
                 </div>
             </div>
@@ -107,54 +125,70 @@
         </div>
     </section>
 
-    {{-- Konten Utama: Daftar Editorial Artikel --}}
-    <main class="section-block">
+    {{-- Konten Utama: Daftar Editorial Artikel dengan Thumbnail Gambar --}}
+    <main class="section-block bg-soft py-5">
         <div class="container">
             @if ($guides->isNotEmpty())
                 <div class="row justify-content-center">
                     <div class="col-lg-10 col-xl-9">
                         <div class="guide-editorial-feed">
                             @foreach ($guides as $guide)
-                                <article class="guide-editorial-item">
-                                    {{-- Meta Atas --}}
-                                    <div class="guide-meta-top">
-                                        <a href="{{ route('guides.index', ['kategori' => $guide->category]) }}"
-                                           class="guide-category-tag">
-                                            <i class="bi {{ $guide->categoryIcon() }}"></i>
-                                            {{ $guide->categoryLabel() }}
+                                <article class="guide-editorial-card">
+                                    {{-- 4 & 9. Thumbnail Gambar Tematik Konsisten --}}
+                                    <div class="guide-thumbnail-wrap">
+                                        <a href="{{ route('guides.show', $guide->slug) }}" tabindex="-1" aria-hidden="true">
+                                            <img src="{{ $guide->thumbnailImage() }}"
+                                                 alt="{{ $guide->thumbnailAlt() }}"
+                                                 loading="lazy"
+                                                 width="250"
+                                                 height="156">
                                         </a>
-                                        <span>&bull;</span>
-                                        <time datetime="{{ $guide->effectiveDate()->toIso8601String() }}">
-                                            {{ $guide->effectiveDate()->isoFormat('D MMMM Y') }}
-                                        </time>
-                                        <span>&bull;</span>
-                                        <span>
-                                            <i class="bi bi-clock me-1"></i>{{ $guide->reading_time_minutes }} menit baca
-                                        </span>
                                     </div>
 
-                                    {{-- Judul Artikel --}}
-                                    <h2 class="guide-editorial-title">
-                                        <a href="{{ route('guides.show', $guide->slug) }}">
-                                            {{ $guide->title }}
-                                        </a>
-                                    </h2>
+                                    {{-- Konten Teks Editorial --}}
+                                    <div class="guide-card-content">
+                                        <div>
+                                            {{-- Meta Atas --}}
+                                            <div class="guide-meta-top">
+                                                <a href="{{ route('guides.index', ['kategori' => $guide->category]) }}"
+                                                   class="guide-category-tag">
+                                                    <i class="bi {{ $guide->categoryIcon() }}" aria-hidden="true"></i>
+                                                    {{ $guide->categoryLabel() }}
+                                                </a>
+                                                <span>&bull;</span>
+                                                <time datetime="{{ $guide->effectiveDate()->toIso8601String() }}">
+                                                    <i class="bi bi-calendar3 me-1" aria-hidden="true"></i>{{ $guide->effectiveDate()->isoFormat('D MMMM Y') }}
+                                                </time>
+                                                <span>&bull;</span>
+                                                <span>
+                                                    <i class="bi bi-clock me-1" aria-hidden="true"></i>{{ $guide->reading_time_minutes }} menit baca
+                                                </span>
+                                            </div>
 
-                                    {{-- Ringkasan Editorial --}}
-                                    <p class="guide-editorial-summary">
-                                        {{ $guide->summary }}
-                                    </p>
+                                            {{-- Judul Artikel --}}
+                                            <h2 class="guide-editorial-title">
+                                                <a href="{{ route('guides.show', $guide->slug) }}">
+                                                    {{ $guide->title }}
+                                                </a>
+                                            </h2>
 
-                                    {{-- Footer: Sumber Rujukan & Link Lanjut --}}
-                                    <div class="guide-editorial-footer">
-                                        <div class="guide-source-badge">
-                                            <i class="bi bi-shield-check"></i>
-                                            <span>Rujukan: <strong>{{ $guide->source_name }}</strong></span>
+                                            {{-- Ringkasan Editorial --}}
+                                            <p class="guide-editorial-summary">
+                                                {{ $guide->summary }}
+                                            </p>
                                         </div>
 
-                                        <a href="{{ route('guides.show', $guide->slug) }}" class="guide-read-more">
-                                            Baca panduan lengkap <i class="bi bi-arrow-right"></i>
-                                        </a>
+                                        {{-- Footer: Sumber Rujukan & Link Lanjut --}}
+                                        <div class="guide-editorial-footer">
+                                            <div class="guide-source-badge">
+                                                <i class="bi bi-patch-check-fill text-success" aria-hidden="true"></i>
+                                                <span>Rujukan: <strong>{{ $guide->source_name }}</strong></span>
+                                            </div>
+
+                                            <a href="{{ route('guides.show', $guide->slug) }}" class="guide-read-more">
+                                                Baca panduan lengkap <i class="bi bi-arrow-right" aria-hidden="true"></i>
+                                            </a>
+                                        </div>
                                     </div>
                                 </article>
                             @endforeach
@@ -172,19 +206,19 @@
                 {{-- Empty State yang Jelas & Informatif --}}
                 <div class="row justify-content-center">
                     <div class="col-lg-8">
-                        <div class="empty-state text-center py-5 px-4 bg-white">
-                            <i class="bi bi-journal-x mb-3 text-secondary-soft" style="font-size: 2.5rem;"></i>
-                            <h3 class="h5 fw-semibold mb-2">Tidak Ada Panduan yang Ditemukan</h3>
-                            <p class="text-secondary-soft small mb-4 mx-auto" style="max-width: 480px;">
+                        <div class="empty-state text-center py-5 px-4 bg-white rounded-3 border border-soft shadow-sm">
+                            <i class="bi bi-journal-x mb-3 text-secondary" style="font-size: 3rem;" aria-hidden="true"></i>
+                            <h3 class="h5 fw-bold mb-2">Tidak Ada Panduan yang Ditemukan</h3>
+                            <p class="text-secondary small mb-4 mx-auto" style="max-width: 480px;">
                                 @if ($search !== '' || $activeCategory)
-                                    Tidak ada artikel panduan keselamatan yang cocok dengan filter atau kata kunci pencarian Anda.
+                                    Tidak ada artikel panduan keselamatan yang cocok dengan filter topik atau kata kunci pencarian Anda.
                                 @else
                                     Saat ini belum ada artikel panduan keselamatan yang dipublikasikan. Silakan periksa kembali nanti.
                                 @endif
                             </p>
                             @if ($search !== '' || $activeCategory)
                                 <a href="{{ route('guides.index') }}" class="btn btn-primary btn-sm px-4">
-                                    <i class="bi bi-arrow-left me-1"></i> Lihat Semua Panduan
+                                    <i class="bi bi-arrow-left me-1" aria-hidden="true"></i> Lihat Semua Panduan
                                 </a>
                             @endif
                         </div>

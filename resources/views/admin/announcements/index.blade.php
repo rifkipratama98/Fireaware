@@ -126,39 +126,40 @@
                 <table class="table align-middle mb-0">
                     <thead class="bg-soft">
                         <tr>
-                            <th scope="col" style="min-width: 260px;">Judul &amp; Ringkasan</th>
-                            <th scope="col">Level</th>
-                            <th scope="col">Wilayah</th>
-                            <th scope="col">Penerbit Resmi</th>
-                            <th scope="col" class="text-center">Status</th>
-                            <th scope="col">Tanggal Rilis</th>
-                            <th scope="col" class="text-end" style="min-width: 140px;">Aksi</th>
+                            <th scope="col" style="min-width: 280px;" class="ps-3">Warta &amp; Ringkasan</th>
+                            <th scope="col" style="width: 120px;">Tingkat</th>
+                            <th scope="col" style="min-width: 160px;">Wilayah</th>
+                            <th scope="col" style="min-width: 160px;">Penerbit Resmi</th>
+                            <th scope="col" class="text-center" style="width: 120px;">Status</th>
+                            <th scope="col" style="width: 130px;">Waktu Rilis</th>
+                            <th scope="col" class="text-end pe-3" style="width: 120px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($announcements as $ann)
                             <tr>
-                                <td>
+                                <td class="ps-3">
                                     <a href="{{ route('admin.announcements.show', $ann) }}" class="fw-semibold text-dark text-decoration-none d-block mb-1">
                                         {{ $ann->title }}
                                         @if ($ann->is_demo)
                                             <span class="badge-demo py-0 px-2 ms-1">DEMO</span>
                                         @endif
                                     </a>
-                                    <div class="small text-secondary-soft text-truncate" style="max-width: 320px;">
+                                    <div class="small text-secondary-soft text-truncate" style="max-width: 340px;">
                                         {{ $ann->excerpt(100) }}
                                     </div>
                                 </td>
                                 <td>
-                                    <span class="badge {{ $ann->levelBadgeClass() }} px-2 py-1">
-                                        <i class="bi {{ $ann->levelIcon() }} me-1"></i>
-                                        {{ $ann->levelLabel() }}
+                                    <span class="badge {{ $ann->levelBadgeClass() }} px-2 py-1 d-inline-flex align-items-center gap-1">
+                                        <i class="bi {{ $ann->levelIcon() }}"></i>
+                                        <span>{{ $ann->levelLabel() }}</span>
                                     </span>
                                 </td>
                                 <td>
                                     @if ($ann->province)
-                                        <span class="small fw-medium text-dark">
-                                            <i class="bi bi-geo-alt me-1 text-primary"></i>{{ $ann->province->name }}
+                                        <span class="small fw-medium text-dark d-inline-flex align-items-center gap-1">
+                                            <i class="bi bi-geo-alt-fill text-danger" style="font-size: 0.8rem;"></i>
+                                            <span>{{ $ann->province->name }}</span>
                                         </span>
                                     @else
                                         <span class="small text-secondary-soft">Seluruh Kalimantan</span>
@@ -167,41 +168,47 @@
                                 <td>
                                     <div class="small fw-medium text-dark">{{ $ann->source_name ?? '—' }}</div>
                                     @if ($ann->source_url)
-                                        <a href="{{ $ann->source_url }}" target="_blank" rel="noopener noreferrer" class="small text-primary text-decoration-none">
-                                            <i class="bi bi-link-45deg"></i> tautan
+                                        <a href="{{ $ann->source_url }}" target="_blank" rel="noopener noreferrer" class="small text-primary text-decoration-none d-inline-flex align-items-center gap-1">
+                                            <i class="bi bi-box-arrow-up-right" style="font-size: 0.75rem;"></i>
+                                            <span>Rujukan</span>
                                         </a>
                                     @endif
                                 </td>
                                 <td class="text-center">
                                     @if ($ann->status === 'published')
-                                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1">
-                                            <i class="bi bi-check-circle me-1"></i> Published
+                                        <span class="badge badge-status-published d-inline-flex align-items-center gap-1 px-2 py-1">
+                                            <i class="bi bi-check-circle-fill"></i>
+                                            <span>Published</span>
                                         </span>
                                     @else
-                                        <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-2 py-1">
-                                            <i class="bi bi-clock me-1"></i> Draft
+                                        <span class="badge badge-status-draft d-inline-flex align-items-center gap-1 px-2 py-1">
+                                            <i class="bi bi-clock"></i>
+                                            <span>Draft</span>
                                         </span>
                                     @endif
                                 </td>
                                 <td>
-                                    <div class="small text-secondary-soft">
-                                        {{ $ann->effectiveDate()->isoFormat('D MMM Y, HH:mm') }}
+                                    <div class="small text-secondary-soft fw-medium">
+                                        {{ $ann->effectiveDate()->isoFormat('D MMM Y') }}
+                                    </div>
+                                    <div class="small text-muted" style="font-size: .75rem;">
+                                        {{ $ann->effectiveDate()->format('H:i') }} WIB
                                     </div>
                                 </td>
-                                <td class="text-end">
-                                    <div class="btn-group btn-group-sm" role="group" aria-label="Aksi">
+                                <td class="text-end pe-3">
+                                    <div class="btn-action-group" role="group" aria-label="Aksi">
                                         <a href="{{ route('admin.announcements.show', $ann) }}"
-                                           class="btn btn-outline-secondary"
+                                           class="btn-action btn-action-view"
                                            title="Lihat Detail Pengumuman">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                         <a href="{{ route('admin.announcements.edit', $ann) }}"
-                                           class="btn btn-outline-secondary"
+                                           class="btn-action btn-action-edit"
                                            title="Edit Pengumuman">
                                             <i class="bi bi-pencil"></i>
                                         </a>
                                         <button type="button"
-                                                class="btn btn-outline-danger"
+                                                class="btn-action btn-action-delete"
                                                 data-delete-url="{{ route('admin.announcements.destroy', $ann) }}"
                                                 data-delete-title="{{ $ann->title }}"
                                                 data-delete-type="pengumuman resmi"

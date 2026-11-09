@@ -115,22 +115,29 @@
                 <table class="table align-middle mb-0">
                     <thead class="bg-soft">
                         <tr>
+                            <th scope="col" style="width: 80px;" class="ps-3 text-center">Visual</th>
                             <th scope="col" style="min-width: 280px;">Judul &amp; Ringkasan</th>
-                            <th scope="col">Kategori</th>
-                            <th scope="col">Sumber Rujukan</th>
-                            <th scope="col" class="text-center">Status</th>
-                            <th scope="col">Waktu Terbit</th>
-                            <th scope="col" class="text-end" style="min-width: 140px;">Aksi</th>
+                            <th scope="col" style="min-width: 160px;">Kategori</th>
+                            <th scope="col" style="min-width: 160px;">Sumber Rujukan</th>
+                            <th scope="col" class="text-center" style="width: 120px;">Status</th>
+                            <th scope="col" style="width: 130px;">Waktu Terbit</th>
+                            <th scope="col" class="text-end pe-3" style="width: 120px;">Aksi</th>
                         </tr>
                     </thead>
                     <tbody>
                         @foreach ($guides as $guide)
                             <tr>
+                                <td class="ps-3 text-center">
+                                    <img src="{{ $guide->thumbnailImage() }}"
+                                         alt="{{ $guide->thumbnailAlt() }}"
+                                         class="content-table-thumb shadow-xs"
+                                         loading="lazy">
+                                </td>
                                 <td>
                                     <a href="{{ route('admin.guides.show', $guide) }}" class="fw-semibold text-dark text-decoration-none d-block mb-1">
                                         {{ $guide->title }}
                                     </a>
-                                    <div class="small text-secondary-soft text-truncate" style="max-width: 380px;">
+                                    <div class="small text-secondary-soft text-truncate" style="max-width: 360px;">
                                         {{ $guide->summary }}
                                     </div>
                                 </td>
@@ -143,44 +150,47 @@
                                 <td>
                                     <div class="small fw-medium text-dark">{{ $guide->source_name }}</div>
                                     @if ($guide->source_url)
-                                        <a href="{{ $guide->source_url }}" target="_blank" rel="noopener noreferrer" class="small text-primary text-decoration-none">
-                                            <i class="bi bi-link-45deg"></i> tautan
+                                        <a href="{{ $guide->source_url }}" target="_blank" rel="noopener noreferrer" class="small text-primary text-decoration-none d-inline-flex align-items-center gap-1">
+                                            <i class="bi bi-box-arrow-up-right" style="font-size: 0.75rem;"></i>
+                                            <span>Rujukan</span>
                                         </a>
                                     @endif
                                 </td>
                                 <td class="text-center">
                                     @if ($guide->status === 'published')
-                                        <span class="badge bg-success bg-opacity-10 text-success border border-success border-opacity-25 px-2 py-1">
-                                            <i class="bi bi-check-circle me-1"></i> Published
+                                        <span class="badge badge-status-published d-inline-flex align-items-center gap-1 px-2 py-1">
+                                            <i class="bi bi-check-circle-fill"></i>
+                                            <span>Published</span>
                                         </span>
                                     @else
-                                        <span class="badge bg-warning bg-opacity-10 text-warning border border-warning border-opacity-25 px-2 py-1">
-                                            <i class="bi bi-clock me-1"></i> Draft
+                                        <span class="badge badge-status-draft d-inline-flex align-items-center gap-1 px-2 py-1">
+                                            <i class="bi bi-clock"></i>
+                                            <span>Draft</span>
                                         </span>
                                     @endif
                                 </td>
                                 <td>
-                                    <div class="small text-secondary-soft">
+                                    <div class="small text-secondary-soft fw-medium">
                                         {{ $guide->effectiveDate()->isoFormat('D MMM Y') }}
                                     </div>
                                     <div class="small text-muted" style="font-size: .75rem;">
-                                        {{ $guide->reading_time_minutes }} menit baca
+                                        <i class="bi bi-clock me-1"></i>{{ $guide->reading_time_minutes }} mnt baca
                                     </div>
                                 </td>
-                                <td class="text-end">
-                                    <div class="btn-group btn-group-sm" role="group" aria-label="Aksi">
+                                <td class="text-end pe-3">
+                                    <div class="btn-action-group" role="group" aria-label="Aksi">
                                         <a href="{{ route('admin.guides.show', $guide) }}"
-                                           class="btn btn-outline-secondary"
+                                           class="btn-action btn-action-view"
                                            title="Lihat Detail Panduan">
                                             <i class="bi bi-eye"></i>
                                         </a>
                                         <a href="{{ route('admin.guides.edit', $guide) }}"
-                                           class="btn btn-outline-secondary"
+                                           class="btn-action btn-action-edit"
                                            title="Edit Panduan">
                                             <i class="bi bi-pencil"></i>
                                         </a>
                                         <button type="button"
-                                                class="btn btn-outline-danger"
+                                                class="btn-action btn-action-delete"
                                                 data-delete-url="{{ route('admin.guides.destroy', $guide) }}"
                                                 data-delete-title="{{ $guide->title }}"
                                                 data-delete-type="panduan keselamatan"

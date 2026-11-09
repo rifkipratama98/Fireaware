@@ -258,6 +258,21 @@ class PublicPagesTest extends TestCase
         $response->assertSee('Terendah:');
         $response->assertSee('Tertinggi:');
         $response->assertSee('Rata-rata:');
+    }
 
+    public function test_about_page_loads_successfully_with_provinces_and_disclaimer(): void
+    {
+        Province::create(['name' => 'Kalimantan Barat', 'slug' => 'kalimantan-barat', 'code' => 'KALBAR']);
+        Province::create(['name' => 'Kalimantan Tengah', 'slug' => 'kalimantan-tengah', 'code' => 'KALTENG']);
+
+        $response = $this->get(route('about'));
+
+        $response->assertStatus(200);
+        $response->assertSee('Mengenal FireAware Kalimantan');
+        $response->assertSee('Kalimantan Barat');
+        $response->assertSee('Kalimantan Tengah');
+        $response->assertSee('NASA FIRMS');
+        $response->assertSee('Bukan Sistem Prediksi Kebakaran');
+        $response->assertSee('Batasan Sistem &amp; Disclaimer', false);
     }
 }

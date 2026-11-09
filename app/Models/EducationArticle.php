@@ -187,6 +187,45 @@ class EducationArticle extends Model
     }
 
     /**
+     * Resolusi URL gambar artikel atau fallback tematik berdasarkan kategori.
+     */
+    public function displayImageUrl(): string
+    {
+        $url = $this->imageUrl();
+        if ($url) {
+            return $url;
+        }
+
+        return match ($this->category) {
+            'faktor-penyebab' => asset('images/smoke-haze.jpg'),
+            'ekosistem-gambut' => asset('images/peatland-gambut.jpg'),
+            'dampak-lingkungan' => asset('images/hero-forest.jpg'),
+            'teknik-pencegahan' => asset('images/conservation-action.jpg'),
+            'hukum-kebijakan' => asset('images/forest-canopy.jpg'),
+            default => asset('images/forest-canopy.jpg'),
+        };
+    }
+
+    /**
+     * Keterangan alt teks gambar artikel.
+     */
+    public function displayImageAlt(): string
+    {
+        if (filled($this->image_caption)) {
+            return $this->image_caption;
+        }
+
+        return match ($this->category) {
+            'faktor-penyebab' => 'Ilustrasi kabut asap dan faktor penyebab kebakaran hutan dan lahan',
+            'ekosistem-gambut' => 'Ilustrasi bentang alam ekosistem lahan gambut tropis Kalimantan',
+            'dampak-lingkungan' => 'Ilustrasi keanekaragaman hayati dan kanopi hutan Kalimantan',
+            'teknik-pencegahan' => 'Ilustrasi aksi restorasi dan pencegahan kebakaran lahan',
+            'hukum-kebijakan' => 'Ilustrasi perlindungan kawasan hutan dan regulasi lingkungan',
+            default => 'Ilustrasi edukasi pelestarian lingkungan Kalimantan',
+        };
+    }
+
+    /**
      * Memecah konten menjadi paragraf.
      *
      * @return list<string>

@@ -34,6 +34,10 @@ Route::get('/edukasi/{slug}', [\App\Http\Controllers\EducationController::class,
 Route::get('/pengumuman', [\App\Http\Controllers\AnnouncementController::class, 'index'])->name('announcements.index');
 Route::get('/pengumuman/{slug}', [\App\Http\Controllers\AnnouncementController::class, 'show'])->name('announcements.show');
 
+// Halaman Tentang FireAware Kalimantan
+Route::get('/tentang', [\App\Http\Controllers\AboutController::class, 'index'])->name('about');
+Route::get('/about', fn () => redirect()->route('about'));
+
 // Endpoint JSON notifikasi browser aktif untuk masyarakat di portal publik
 Route::get('/api/notifications/active', [\App\Http\Controllers\Admin\NotificationSettingController::class, 'activePublicAlerts'])->name('notifications.active');
 
@@ -55,6 +59,8 @@ Route::prefix('admin')->name('admin.')->group(function () {
         Route::resource('education', \App\Http\Controllers\Admin\EducationArticleController::class);
         Route::resource('announcements', \App\Http\Controllers\Admin\AnnouncementController::class);
         Route::get('/wilayah', [\App\Http\Controllers\Admin\RegionController::class, 'index'])->name('regions.index');
+        Route::post('/wilayah', [\App\Http\Controllers\Admin\RegionController::class, 'store'])->name('regions.store');
+        Route::put('/wilayah/{province}', [\App\Http\Controllers\Admin\RegionController::class, 'update'])->name('regions.update');
         Route::get('/integrasi', [\App\Http\Controllers\Admin\IntegrationController::class, 'index'])->name('integrations.index');
         Route::post('/integrasi/sync/{source}', [\App\Http\Controllers\Admin\IntegrationController::class, 'sync'])->name('integrations.sync');
         Route::get('/notifikasi', [\App\Http\Controllers\Admin\NotificationSettingController::class, 'index'])->name('notifications.index');

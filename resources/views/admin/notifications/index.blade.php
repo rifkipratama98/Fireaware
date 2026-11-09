@@ -14,66 +14,75 @@
         <div class="d-flex align-items-center gap-2">
             <form action="{{ route('admin.notifications.test') }}" method="POST" class="d-inline">
                 @csrf
-                <button type="submit" class="btn btn-outline-secondary d-inline-flex align-items-center gap-2">
+                <button type="submit" class="btn btn-outline-secondary btn-sm d-inline-flex align-items-center gap-1 rounded-3">
                     <i class="bi bi-broadcast"></i>
                     <span>Kirim Notifikasi Uji Coba</span>
                 </button>
             </form>
+            <button type="button" class="btn btn-primary btn-sm d-inline-flex align-items-center gap-1 rounded-3 shadow-xs" onclick="document.getElementById('btnOpenSaveConfirmModal')?.click()">
+                <i class="bi bi-check-lg"></i>
+                <span>Simpan Konfigurasi</span>
+            </button>
         </div>
     </div>
 
     {{-- Penjelasan Aturan Masyarakat Tanpa Login --}}
-    <div class="alert alert-info py-2 px-3 small d-flex align-items-center gap-2 mb-4 rounded-3 border-info border-opacity-25" role="alert">
-        <i class="bi bi-shield-check fs-5 text-primary"></i>
-        <div>
-            <strong>Prinsip Notifikasi Masyarakat:</strong> Pengguna publik (Masyarakat Kalimantan) tidak memiliki akun login. Notifikasi publik disiarkan melalui peramban web (Web Notification API) saat membuka portal, tanpa menyimpan data pribadi warga di basis data.
+    <div class="alert alert-info py-2-5 px-3 small d-flex align-items-start gap-2 mb-4 rounded-3 border-info border-opacity-25 bg-soft" role="alert">
+        <i class="bi bi-shield-check fs-5 text-primary mt-0-5 flex-shrink-0"></i>
+        <div class="lh-sm">
+            <strong class="text-dark d-block mb-1">Prinsip Notifikasi Masyarakat:</strong>
+            <span class="text-secondary">Pengguna publik (Masyarakat Kalimantan) tidak memiliki akun login. Notifikasi publik disiarkan melalui peramban web (Web Notification API) saat membuka portal, tanpa menyimpan data pribadi warga di basis data.</span>
         </div>
     </div>
 
     {{-- Ringkasan Statistik Log Pengiriman --}}
     <div class="row g-3 mb-4">
         <div class="col-6 col-md-3">
-            <div class="stat-card p-3">
+            <div class="stat-card p-3 h-100">
                 <div class="d-flex align-items-center gap-3">
-                    <span class="stat-icon bg-mist text-primary"><i class="bi bi-bell"></i></span>
+                    <span class="stat-icon bg-mist text-primary fs-5"><i class="bi bi-bell"></i></span>
                     <div>
-                        <div class="stat-value">{{ $stats['total'] }}</div>
-                        <div class="stat-label text-secondary-soft">Total Evaluasi</div>
+                        <div class="stat-value">{{ number_format($stats['total']) }}</div>
+                        <div class="stat-label">Total Evaluasi</div>
                     </div>
                 </div>
+                <div class="stat-sub mt-2 text-muted small">Event peringatan diproses</div>
             </div>
         </div>
         <div class="col-6 col-md-3">
-            <div class="stat-card p-3">
+            <div class="stat-card p-3 h-100">
                 <div class="d-flex align-items-center gap-3">
-                    <span class="stat-icon bg-mist text-success"><i class="bi bi-send-check"></i></span>
+                    <span class="stat-icon bg-success bg-opacity-10 text-success fs-5"><i class="bi bi-send-check"></i></span>
                     <div>
-                        <div class="stat-value text-success">{{ $stats['sent'] }}</div>
-                        <div class="stat-label text-secondary-soft">Terkirim</div>
+                        <div class="stat-value text-success">{{ number_format($stats['sent']) }}</div>
+                        <div class="stat-label">Terkirim</div>
                     </div>
                 </div>
+                <div class="stat-sub mt-2 text-muted small">Berhasil disiarkan ke kanal</div>
             </div>
         </div>
         <div class="col-6 col-md-3">
-            <div class="stat-card p-3">
+            <div class="stat-card p-3 h-100">
                 <div class="d-flex align-items-center gap-3">
-                    <span class="stat-icon bg-mist text-warning"><i class="bi bi-slash-circle"></i></span>
+                    <span class="stat-icon bg-warning bg-opacity-10 text-warning fs-5"><i class="bi bi-slash-circle"></i></span>
                     <div>
-                        <div class="stat-value text-warning">{{ $stats['suppressed'] }}</div>
-                        <div class="stat-label text-secondary-soft">Ditekan Anti-Spam</div>
+                        <div class="stat-value text-warning">{{ number_format($stats['suppressed']) }}</div>
+                        <div class="stat-label">Ditekan Anti-Spam</div>
                     </div>
                 </div>
+                <div class="stat-sub mt-2 text-muted small">Jeda cooldown / jam hening</div>
             </div>
         </div>
         <div class="col-6 col-md-3">
-            <div class="stat-card p-3">
+            <div class="stat-card p-3 h-100">
                 <div class="d-flex align-items-center gap-3">
-                    <span class="stat-icon bg-mist text-danger"><i class="bi bi-exclamation-octagon"></i></span>
+                    <span class="stat-icon bg-danger bg-opacity-10 text-danger fs-5"><i class="bi bi-exclamation-octagon"></i></span>
                     <div>
-                        <div class="stat-value text-danger">{{ $stats['failed'] }}</div>
-                        <div class="stat-label text-secondary-soft">Gagal Kirim</div>
+                        <div class="stat-value text-danger">{{ number_format($stats['failed']) }}</div>
+                        <div class="stat-label">Gagal Kirim</div>
                     </div>
                 </div>
+                <div class="stat-sub mt-2 text-muted small">Kendala SMTP atau webhook</div>
             </div>
         </div>
     </div>

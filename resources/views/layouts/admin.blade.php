@@ -41,16 +41,37 @@
             const collapseBtn = document.getElementById('sidebarCollapseBtn');
             const shell = document.querySelector('.admin-shell');
 
+            function updateBtnState(isCollapsed) {
+                if (!collapseBtn) return;
+                const icon = collapseBtn.querySelector('i');
+                if (isCollapsed) {
+                    collapseBtn.setAttribute('title', 'Tampilkan Sidebar');
+                    collapseBtn.setAttribute('aria-label', 'Tampilkan sidebar');
+                    if (icon) icon.className = 'bi bi-layout-sidebar fs-5 lh-1';
+                } else {
+                    collapseBtn.setAttribute('title', 'Sembunyikan Sidebar');
+                    collapseBtn.setAttribute('aria-label', 'Sembunyikan sidebar');
+                    if (icon) icon.className = 'bi bi-layout-sidebar-inset fs-5 lh-1';
+                }
+            }
+
             if (collapseBtn && shell) {
-                // Pulihkan preferensi collapse pengguna
-                if (localStorage.getItem('fireaware_admin_sidebar_collapsed') === 'true') {
+                if (localStorage.getItem('fireaware_admin_sidebar_init_v3') !== '1') {
+                    localStorage.removeItem('fireaware_admin_sidebar_collapsed');
+                    localStorage.setItem('fireaware_admin_sidebar_init_v3', '1');
+                }
+
+                const isCollapsed = localStorage.getItem('fireaware_admin_sidebar_collapsed') === 'true';
+                if (isCollapsed) {
                     shell.classList.add('sidebar-collapsed');
                 }
+                updateBtnState(isCollapsed);
 
                 collapseBtn.addEventListener('click', function () {
                     shell.classList.toggle('sidebar-collapsed');
-                    const isCollapsed = shell.classList.contains('sidebar-collapsed');
-                    localStorage.setItem('fireaware_admin_sidebar_collapsed', String(isCollapsed));
+                    const nowCollapsed = shell.classList.contains('sidebar-collapsed');
+                    localStorage.setItem('fireaware_admin_sidebar_collapsed', String(nowCollapsed));
+                    updateBtnState(nowCollapsed);
                 });
             }
         })();

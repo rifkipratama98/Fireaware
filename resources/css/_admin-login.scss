@@ -1,0 +1,479 @@
+// =====================================================================
+// Login halaman admin (Split-Screen Environmental Layout)
+// =====================================================================
+
+.login-body {
+    background-color: $bg-soft;
+    color: $text-main;
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+.admin-login-layout {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+
+    @media (min-width: 992px) {
+        flex-direction: row;
+    }
+}
+
+.admin-login-visual {
+    position: relative;
+    background-color: $primary-dark;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    @media (max-width: 991.98px) {
+        padding: 2.25rem 1.5rem;
+        min-height: 220px;
+        background-position: center 35%;
+    }
+
+    @media (min-width: 992px) {
+        flex: 0 0 46%;
+        max-width: 46%;
+        min-height: 100vh;
+        height: 100vh;
+        position: sticky;
+        top: 0;
+        padding: 3.5rem 3rem 2.5rem;
+    }
+
+    @media (min-width: 1400px) {
+        flex: 0 0 44%;
+        max-width: 44%;
+        padding: 4.5rem 4rem 3rem;
+    }
+}
+
+.admin-visual-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+
+    .brand-mark {
+        display: grid;
+        place-items: center;
+        width: 2.75rem;
+        height: 2.75rem;
+        border-radius: 0.65rem;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        color: #fff;
+        font-size: 1.35rem;
+        flex: 0 0 auto;
+    }
+
+    .brand-name {
+        font-weight: 750;
+        font-size: 1.15rem;
+        color: #fff;
+        line-height: 1.15;
+        letter-spacing: -0.015em;
+    }
+
+    .brand-sub {
+        font-size: 0.78rem;
+        color: rgba(255, 255, 255, 0.8);
+        font-weight: 500;
+        letter-spacing: 0.03em;
+        text-transform: uppercase;
+    }
+}
+
+.admin-visual-content {
+    margin: 2.5rem 0;
+
+    @media (max-width: 991.98px) {
+        display: none;
+    }
+
+    .visual-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        padding: 0.35rem 0.85rem;
+        border-radius: 2rem;
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.22);
+        font-size: 0.78rem;
+        font-weight: 600;
+        color: #E7EFE7;
+        margin-bottom: 1.25rem;
+    }
+
+    .visual-title {
+        font-size: clamp(1.6rem, 1.3rem + 1vw, 2.15rem);
+        font-weight: 750;
+        line-height: 1.28;
+        color: #fff;
+        letter-spacing: -0.025em;
+        margin-bottom: 1rem;
+    }
+
+    .visual-desc {
+        font-size: 0.925rem;
+        line-height: 1.65;
+        color: rgba(255, 255, 255, 0.85);
+        max-width: 440px;
+        margin-bottom: 1.75rem;
+    }
+
+    .visual-list {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        max-width: 440px;
+    }
+
+    .visual-list-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 0.65rem;
+        font-size: 0.875rem;
+        color: rgba(255, 255, 255, 0.92);
+
+        i {
+            color: #88C49D;
+            font-size: 0.95rem;
+            margin-top: 0.15rem;
+            flex: 0 0 auto;
+        }
+    }
+}
+
+.admin-visual-footer {
+    font-size: 0.78rem;
+    color: rgba(255, 255, 255, 0.68);
+    line-height: 1.5;
+
+    @media (max-width: 991.98px) {
+        margin-top: 0.75rem;
+    }
+}
+
+.admin-login-form-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #fff;
+    padding: 2.25rem 1.5rem;
+    min-height: calc(100vh - 220px);
+
+    @media (min-width: 768px) {
+        padding: 3.5rem 3rem;
+    }
+
+    @media (min-width: 992px) {
+        min-height: 100vh;
+        padding: 4rem 3.5rem;
+    }
+}
+
+.admin-login-card {
+    width: 100%;
+    max-width: 430px;
+    margin: 0 auto;
+}
+
+.admin-login-top-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.45rem;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: $text-secondary;
+        text-decoration: none;
+        padding: 0.35rem 0.65rem;
+        border-radius: 0.4rem;
+        transition: color 0.15s ease, background-color 0.15s ease;
+
+        &:hover {
+            color: $primary;
+            background-color: $mist-green;
+        }
+
+        &:focus-visible {
+            outline: 2px solid $primary;
+            outline-offset: 2px;
+        }
+    }
+
+    .badge-scope {
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: $primary;
+        background-color: $mist-green;
+        padding: 0.25rem 0.65rem;
+        border-radius: 0.35rem;
+        letter-spacing: 0.015em;
+    }
+}
+
+.admin-login-header {
+    margin-bottom: 1.75rem;
+
+    .login-heading {
+        font-size: 1.55rem;
+        font-weight: 750;
+        letter-spacing: -0.02em;
+        color: $text-main;
+        margin-bottom: 0.35rem;
+        line-height: 1.25;
+    }
+
+    .login-subheading {
+        font-size: 0.88rem;
+        color: $text-secondary;
+        margin-bottom: 0;
+        line-height: 1.5;
+    }
+}
+
+.admin-field-group {
+    margin-bottom: 1.35rem;
+
+    .form-label {
+        display: block;
+        font-size: 0.875rem;
+        font-weight: 600;
+        color: $text-main;
+        margin-bottom: 0.45rem;
+    }
+}
+
+.admin-input-box {
+    position: relative;
+    display: flex;
+    align-items: stretch;
+
+    .box-icon {
+        position: absolute;
+        left: 0.95rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: $text-secondary;
+        font-size: 1.05rem;
+        pointer-events: none;
+        z-index: 4;
+        transition: color 0.15s ease;
+    }
+
+    .form-control {
+        min-height: 48px;
+        padding-left: 2.75rem;
+        padding-right: 1rem;
+        font-size: 0.95rem;
+        border: 1.5px solid $border-soft;
+        border-radius: 0.6rem;
+        color: $text-main;
+        background-color: #fff;
+        transition: border-color 0.15s ease, box-shadow 0.15s ease;
+
+        &::placeholder {
+            color: rgba($text-secondary, 0.6);
+            font-size: 0.9rem;
+        }
+
+        &:focus {
+            border-color: $primary;
+            box-shadow: 0 0 0 0.22rem rgba($primary, 0.14);
+            outline: none;
+
+            ~ .box-icon {
+                color: $primary;
+            }
+        }
+
+        &.is-invalid {
+            border-color: $critical;
+            padding-right: 2.85rem;
+            background-image: none;
+
+            &:focus {
+                box-shadow: 0 0 0 0.22rem rgba($critical, 0.14);
+            }
+
+            ~ .box-icon {
+                color: $critical;
+            }
+        }
+    }
+
+    &.has-toggle {
+        .form-control {
+            padding-right: 3.25rem;
+        }
+    }
+}
+
+.admin-toggle-pass {
+    position: absolute;
+    right: 0.35rem;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 4;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    min-width: 42px;
+    min-height: 42px;
+    padding: 0;
+    border: none;
+    background: transparent;
+    color: $text-secondary;
+    border-radius: 0.45rem;
+    cursor: pointer;
+    transition: color 0.15s ease, background-color 0.15s ease;
+
+    i {
+        font-size: 1.15rem;
+    }
+
+    &:hover {
+        color: $primary;
+        background-color: $mist-green;
+    }
+
+    &:focus-visible {
+        outline: 2px solid $primary;
+        outline-offset: 1px;
+    }
+}
+.admin-input-error {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.4rem;
+    font-size: 0.825rem;
+    color: $critical;
+    font-weight: 500;
+    margin-top: 0.4rem;
+    line-height: 1.4;
+
+    i {
+        font-size: 0.9rem;
+        margin-top: 0.1rem;
+        flex: 0 0 auto;
+    }
+}
+
+.admin-login-options {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+
+    .form-check-input {
+        width: 1.15rem;
+        height: 1.15rem;
+        margin-top: 0.15rem;
+        border: 1.5px solid $border-soft;
+        cursor: pointer;
+
+        &:checked {
+            background-color: $primary;
+            border-color: $primary;
+        }
+
+        &:focus {
+            box-shadow: 0 0 0 0.2rem rgba($primary, 0.14);
+            border-color: $primary;
+        }
+    }
+
+    .form-check-label {
+        color: $text-secondary;
+        cursor: pointer;
+        user-select: none;
+        padding-left: 0.25rem;
+    }
+}
+
+.admin-login-submit-btn {
+    min-height: 48px;
+    font-size: 0.98rem;
+    font-weight: 650;
+    letter-spacing: -0.01em;
+    border-radius: 0.6rem;
+    background-color: $primary;
+    border-color: $primary;
+    color: #fff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    transition: background-color 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease;
+
+    &:hover {
+        background-color: $primary-dark;
+        border-color: $primary-dark;
+    }
+
+    &:focus-visible {
+        outline: none;
+        box-shadow: 0 0 0 0.25rem rgba($primary, 0.25);
+    }
+}
+
+.admin-security-footer {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid $border-soft;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    font-size: 0.8rem;
+    color: $text-secondary;
+    line-height: 1.45;
+
+    i {
+        color: $leaf-green;
+        font-size: 0.95rem;
+        margin-top: 0.1rem;
+        flex: 0 0 auto;
+    }
+}
+
+.admin-mobile-back-link {
+    display: none;
+    text-align: center;
+    margin-top: 1.5rem;
+
+    @media (max-width: 991.98px) {
+        display: block;
+    }
+
+    a {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        color: $text-secondary;
+        font-size: 0.85rem;
+        font-weight: 500;
+        text-decoration: none;
+
+        &:hover {
+            color: $primary;
+        }
+    }
+}
+

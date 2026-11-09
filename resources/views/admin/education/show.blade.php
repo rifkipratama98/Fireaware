@@ -69,6 +69,10 @@
                 <span class="text-secondary-soft">
                     Artikel ini berstatus draf. Akses publik ke URL <code>/edukasi/{{ $article->slug }}</code> akan diblokir dengan respons 404 Not Found.
                 </span>
+            </div>
+        </div>
+    @endif
+
     <div class="row g-4">
         {{-- Kolom Kiri: Konten Utama & Media --}}
         <div class="col-lg-8">
@@ -135,10 +139,6 @@
                 </div>
             </div>
         </div>
-
-            </div>
-        </div>
-    @endif
 
         {{-- Kolom Kanan: Metadata --}}
         <div class="col-lg-4">
