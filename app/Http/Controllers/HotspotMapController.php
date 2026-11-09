@@ -4,41 +4,132 @@ namespace App\Http\Controllers;
 
 use App\Models\Hotspot;
 use App\Models\Province;
-use Illuminate\Contracts\View\View;
+use App\Models\SyncLog;
+use App\Services\Integrations\FirmsHotspotSyncService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Carbon;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class HotspotMapController extends Controller
 {
     /** Jumlah maksimum titik yang diambil per permintaan. */
     private const MAX_POINTS = 3000;
 
+    /** Batas koordinat geografis wilayah 5 provinsi Kalimantan (SW, NE). */
+    private const KALIMANTAN_BOUNDS = [
+        [-4.4, 108.8], // Ujung Barat Daya (Selatan Kalsel/Kalteng, Barat Kalbar)
+        [4.5, 119.2],  // Ujung Timur Laut (Utara Kaltara, Timur Kaltim)
+    ];
+
     /**
      * Tampilkan halaman Peta Hotspot.
      * Filter awal dibaca dari query string agar URL bisa dibagikan.
      */
-    public function index(Request $request): View
+    public function index(Request $request): Response
     {
-        $provinces = Province::query()->orderBy('name')->get(['id', 'name', 'slug']);
+        $provinces = Province::query()->orderBy('name')->get(['id', 'name', 'slug', 'center_lat', 'center_lng']);
 
         $filter = [
             'provinsi' => $request->query('provinsi', ''),
-            'dari' => $this->sanitizeDate($request->query('dari')),
-            'sampai' => $this->sanitizeDate($request->query('sampai')),
+            'dari' => $this->sanitizeDate($request->query('dari'))?->format('Y-m-d') ?? '',
+            'sampai' => $this->sanitizeDate($request->query('sampai'))?->format('Y-m-d') ?? '',
         ];
 
         $activeProvince = $provinces->firstWhere('slug', $filter['provinsi']);
 
-        // Meta pembaruan terakhir seluruh data
+        // Meta pembaruan terakhir seluruh data hotspot
         $lastUpdatedAt = Hotspot::query()->max('detected_at');
+        $totalHotspots = Hotspot::query()->count();
 
-        return view('peta-hotspot', [
+        // Cari catatan sinkronisasi satelit NASA FIRMS terakhir
+        $latestSync = SyncLog::query()
+            ->whereIn('source_key', [FirmsHotspotSyncService::SOURCE_KEY, 'firms'])
+            ->latest('id')
+            ->first();
+
+        $syncStatus = $this->determineSyncStatus($latestSync, $lastUpdatedAt, $totalHotspots);
+
+        return Inertia::render('Public/HotspotMap', [
             'provinces' => $provinces,
             'filter' => $filter,
             'activeProvince' => $activeProvince,
-            'lastUpdatedAt' => $lastUpdatedAt ? \Illuminate\Support\Carbon::parse($lastUpdatedAt) : null,
+            'kalimantanBounds' => self::KALIMANTAN_BOUNDS,
+            'lastUpdatedAt' => $lastUpdatedAt ? Carbon::parse($lastUpdatedAt)->toIso8601String() : null,
+            'syncStatus' => $syncStatus,
             'maxPoints' => self::MAX_POINTS,
+            'apiEndpoint' => route('hotspot.map.data'),
         ]);
+    }
+
+    /**
+     * Tentukan status pembaruan data secara jujur dan transparan berdasarkan kondisi aktual.
+     */
+    private function determineSyncStatus(?SyncLog $latestSync, ?string $lastUpdatedAt, int $totalHotspots): array
+    {
+        if ($totalHotspots === 0 && ! $latestSync) {
+            return [
+                'code' => 'unavailable',
+                'label' => 'Data belum tersedia',
+                'description' => 'Belum ada rekaman titik panas yang terdaftar di basis data.',
+                'lastSyncAt' => null,
+                'lastObservationAt' => null,
+            ];
+        }
+
+        if ($latestSync) {
+            if (in_array($latestSync->status, [SyncLog::STATUS_FAILED, SyncLog::STATUS_TIMEOUT], true)) {
+                return [
+                    'code' => 'failed',
+                    'label' => 'Sinkronisasi gagal',
+                    'description' => 'Proses sinkronisasi telemetri satelit terakhir mengalami kendala koneksi.',
+                    'lastSyncAt' => $latestSync->completed_at ? Carbon::parse($latestSync->completed_at)->toIso8601String() : null,
+                    'lastObservationAt' => $lastUpdatedAt ? Carbon::parse($lastUpdatedAt)->toIso8601String() : null,
+                ];
+            }
+
+            if ($latestSync->status === SyncLog::STATUS_RUNNING) {
+                return [
+                    'code' => 'pending',
+                    'label' => 'Pembaruan tertunda',
+                    'description' => 'Proses penarikan telemetri satelit sedang berlangsung.',
+                    'lastSyncAt' => $latestSync->started_at ? Carbon::parse($latestSync->started_at)->toIso8601String() : null,
+                    'lastObservationAt' => $lastUpdatedAt ? Carbon::parse($lastUpdatedAt)->toIso8601String() : null,
+                ];
+            }
+        }
+
+        if ($lastUpdatedAt) {
+            $parsedDate = Carbon::parse($lastUpdatedAt);
+            $hoursAgo = $parsedDate->diffInHours(now());
+
+            if ($hoursAgo <= 48) {
+                return [
+                    'code' => 'latest',
+                    'label' => 'Data terbaru',
+                    'description' => 'Telemetri satelit termutakhir terdaftar dalam 48 jam terakhir.',
+                    'lastSyncAt' => $latestSync?->completed_at ? Carbon::parse($latestSync->completed_at)->toIso8601String() : null,
+                    'lastObservationAt' => $parsedDate->toIso8601String(),
+                ];
+            }
+
+            return [
+                'code' => 'outdated',
+                'label' => 'Data sudah lama',
+                'description' => 'Observasi terakhir tercatat pada ' . $parsedDate->timezone('Asia/Makassar')->translatedFormat('d M Y, H:i') . ' WITA.',
+                'lastSyncAt' => $latestSync?->completed_at ? Carbon::parse($latestSync->completed_at)->toIso8601String() : null,
+                'lastObservationAt' => $parsedDate->toIso8601String(),
+            ];
+        }
+
+        return [
+            'code' => 'unavailable',
+            'label' => 'Data belum tersedia',
+            'description' => 'Tidak ditemukan rekaman data hotspot pada sistem.',
+            'lastSyncAt' => null,
+            'lastObservationAt' => null,
+        ];
     }
 
     /**
@@ -123,14 +214,14 @@ class HotspotMapController extends Controller
     /**
      * Bersihkan input tanggal menjadi Carbon (null bila tidak valid / kosong).
      */
-    private function sanitizeDate($value): ?\Illuminate\Support\Carbon
+    private function sanitizeDate($value): ?Carbon
     {
         if (! is_string($value) || trim($value) === '') {
             return null;
         }
 
         try {
-            $date = \Illuminate\Support\Carbon::createFromFormat('Y-m-d', trim($value));
+            $date = Carbon::createFromFormat('Y-m-d', trim($value));
             // Pastikan tanggal benar-benar valid (mis. bukan 2026-13-40)
             if (! $date || $date->format('Y-m-d') !== trim($value)) {
                 return null;
@@ -142,3 +233,4 @@ class HotspotMapController extends Controller
         }
     }
 }
+

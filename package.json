@@ -3,22 +3,35 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "build": "node --max-old-space-size=1024 --max-semi-space-size=16 ./node_modules/vite/bin/vite.js build",
+        "build": "vite build",
         "dev": "vite"
     },
     "devDependencies": {
         "@popperjs/core": "^2.11.8",
+        "@tailwindcss/vite": "^4.3.5",
+        "@vitejs/plugin-react": "^5.0.0",
         "axios": "^1.11.0",
         "bootstrap": "^5.3.7",
         "bootstrap-icons": "^1.11.3",
         "concurrently": "^9.0.1",
         "laravel-vite-plugin": "^2.0.0",
         "sass": "^1.79.0",
+        "tailwindcss": "^4.3.5",
         "vite": "^7.0.7"
     },
     "dependencies": {
+        "@inertiajs/react": "^3.11.0",
         "chart.js": "^4.6.1",
+        "class-variance-authority": "^0.7.1",
+        "clsx": "^2.1.1",
+        "gsap": "^3.15.1",
         "leaflet": "^1.9.4",
-        "leaflet.markercluster": "^1.5.3"
+        "leaflet.markercluster": "^1.5.3",
+        "lucide-react": "^1.70.0",
+        "motion": "^14.10.1",
+        "react": "^19.3.1",
+        "react-dom": "^19.3.1",
+        "swiper": "^14.4.0",
+        "tailwind-merge": "^3.7.0"
     }
 }

@@ -1,0 +1,351 @@
+@import "tailwindcss";
+
+@theme {
+  /* EMBER & ASH */
+  --color-warm-alabaster: #F8F9FA;
+  --color-charcoal-ash: #1E242B;
+  --color-burnt-orange: #E05A2B;
+  --color-amber-gold: #F4A261;
+  --color-dark-slate: #2B303A;
+
+  /* FOREST RECOVERY */
+  --color-soft-sand: #F6F5F2;
+  --color-deep-pine: #1B4332;
+  --color-flame-terracotta: #D94E34;
+  --color-sage-leaf: #52B788;
+  --color-deep-charcoal: #1C2526;
+
+  /* STATUS COLORS */
+  --color-status-aman: #2A9D8F;
+  --color-status-waspada: #E9C46A;
+  --color-status-siaga: #F4A261;
+  --color-status-darurat: #E63946;
+
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --font-display: 'Plus Jakarta Sans', 'Inter', sans-serif;
+}
+
+:root {
+  --color-warm-alabaster: #F8F9FA;
+  --color-charcoal-ash: #1E242B;
+  --color-burnt-orange: #E05A2B;
+  --color-amber-gold: #F4A261;
+  --color-dark-slate: #2B303A;
+
+  --color-soft-sand: #F6F5F2;
+  --color-deep-pine: #1B4332;
+  --color-flame-terracotta: #D94E34;
+  --color-sage-leaf: #52B788;
+  --color-deep-charcoal: #1C2526;
+
+  --color-status-aman: #2A9D8F;
+  --color-status-waspada: #E9C46A;
+  --color-status-siaga: #F4A261;
+  --color-status-darurat: #E63946;
+}
+
+/* Liquid Glass Navbar & Surface Tokens */
+.liquid-glass {
+  background: rgba(30, 36, 43, 0.72);
+  backdrop-filter: blur(24px) saturate(190%) contrast(105%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%) contrast(105%);
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 
+    0 12px 36px -8px rgba(0, 0, 0, 0.45),
+    0 2px 8px -2px rgba(0, 0, 0, 0.25),
+    0 1px 0 0 rgba(255, 255, 255, 0.25) inset;
+}
+
+.liquid-glass-scrolled {
+  background: rgba(27, 32, 38, 0.88);
+  backdrop-filter: blur(28px) saturate(190%) contrast(108%);
+  -webkit-backdrop-filter: blur(28px) saturate(190%) contrast(108%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 
+    0 16px 40px -10px rgba(0, 0, 0, 0.55),
+    0 4px 12px -2px rgba(0, 0, 0, 0.3),
+    0 1px 0 0 rgba(255, 255, 255, 0.28) inset;
+}
+
+.liquid-glass-light {
+  background: rgba(248, 249, 250, 0.85);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  border: 1px solid rgba(30, 36, 43, 0.08);
+  box-shadow: 
+    0 10px 30px -10px rgba(30, 36, 43, 0.08),
+    0 1px 0 0 rgba(255, 255, 255, 0.8) inset;
+}
+
+.glass-dropdown {
+  background: rgba(27, 32, 38, 0.95);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  box-shadow: 
+    0 20px 40px -12px rgba(0, 0, 0, 0.5),
+    0 1px 0 0 rgba(255, 255, 255, 0.15) inset;
+}
+
+.glass-reflection {
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-reflection::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.4) 50%, rgba(255,255,255,0) 100%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.glass-reflection::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 48%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+  border-radius: inherit;
+  z-index: 1;
+}
+
+/* Custom Leaflet Map Popup, Tooltip, Custom GIS Hotspot & Cluster Styling */
+.leaflet-div-icon.gis-hotspot-container,
+.gis-hotspot-container,
+.leaflet-div-icon.gis-cluster-container,
+.gis-cluster-container {
+  background: transparent !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* ========================================================
+   GIS SATELLITE THERMAL HOTSPOT MARKER
+   Authentic Earth Observation & Geospatial Telemetry
+   ======================================================== */
+.gis-hotspot-container {
+  position: relative;
+  width: 26px;
+  height: 26px;
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform 0.16s ease-out;
+}
+
+/* Base Dot (Compact, High-Contrast GIS Thermal Anomaly) */
+.gis-marker-dot {
+  position: relative;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.5px solid #FFFFFF;
+  box-shadow: 0 1.5px 4px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.16s cubic-bezier(0.2, 0, 0.2, 1);
+  z-index: 2;
+}
+
+/* Confidence-based crisp color fill */
+.gis-marker-dot.high {
+  background: #E05A2B; /* Burnt Orange */
+}
+
+.gis-marker-dot.nominal {
+  background: #F4A261; /* Amber */
+}
+
+.gis-marker-dot.low {
+  background: #52B788; /* Sage Leaf */
+}
+
+/* Center precise telemetry coordinate pip */
+.gis-marker-pip {
+  width: 3px;
+  height: 3px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  opacity: 0.95;
+  pointer-events: none;
+}
+
+/* Hover state: crisp, fast tactile feedback */
+.gis-hotspot-container:hover {
+  transform: scale(1.25);
+  z-index: 9999 !important;
+}
+
+.gis-hotspot-container:hover .gis-marker-dot {
+  box-shadow: 0 2.5px 7px rgba(0, 0, 0, 0.85), 0 0 0 1.5px rgba(255, 255, 255, 0.9);
+}
+
+/* Target Reticle (Geospatial Crosshair for Selected State) */
+.gis-marker-reticle {
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 1.5px dashed rgba(255, 255, 255, 0.9);
+  background: rgba(224, 90, 43, 0.15);
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transform: scale(0.6);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Selected State */
+.gis-hotspot-container.is-selected {
+  z-index: 10000 !important;
+}
+
+.gis-hotspot-container.is-selected .gis-marker-dot {
+  transform: scale(1.15);
+  border-color: #FFFFFF;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.9), 0 0 0 2px #E05A2B;
+}
+
+.gis-hotspot-container.is-selected .gis-marker-reticle {
+  opacity: 1;
+  transform: scale(1);
+  border-color: #FFFFFF;
+  background: rgba(224, 90, 43, 0.2);
+  outline: 1.5px solid #E05A2B;
+  outline-offset: 1px;
+}
+
+/* ========================================================
+   GIS SATELLITE HOTSPOT CLUSTER
+   Clean, Legible Cartographic Density Markers
+   ======================================================== */
+.gis-cluster-container {
+  display: flex !important;
+  align-items: center;
+  justify-content: center;
+}
+
+.gis-cluster-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  transition: transform 0.18s cubic-bezier(0.2, 0, 0.2, 1);
+}
+
+.gis-cluster-wrapper:hover {
+  transform: scale(1.08);
+}
+
+.gis-cluster-badge {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  color: #FFFFFF;
+  font-family: var(--font-sans, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif);
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.7);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.65);
+  border: 2px solid #FFFFFF;
+  outline: 2.5px solid rgba(0, 0, 0, 0.25);
+}
+
+/* Small Cluster (< 10 points): 32px */
+.gis-cluster-sm .gis-cluster-badge {
+  background: #E05A2B; /* Burnt Orange */
+  font-size: 11px;
+}
+
+/* Medium Cluster (10-49 points): 38px */
+.gis-cluster-md .gis-cluster-badge {
+  background: #D94E34; /* Flame Terracotta */
+  font-size: 12.5px;
+}
+
+/* Large Cluster (>= 50 points): 44px */
+.gis-cluster-lg .gis-cluster-badge {
+  background: #991B1B; /* Deep Crimson */
+  font-size: 14px;
+}
+
+/* Spiderfy Lines for Overlapping Points */
+.leaflet-cluster-spider-leg {
+  stroke: #FFFFFF !important;
+  stroke-width: 1.5 !important;
+  stroke-dasharray: 4, 3 !important;
+  stroke-opacity: 0.9 !important;
+  filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8));
+}
+
+/* ========================================================
+   POPUP & TOOLTIP DARK GLASS STYLING
+   ======================================================== */
+.custom-leaflet-popup .leaflet-popup-content-wrapper {
+  background: rgba(30, 36, 43, 0.96);
+  color: #F8F9FA;
+  border-radius: 18px;
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  box-shadow: 0 20px 40px -8px rgba(0, 0, 0, 0.55), 0 0 1px 1px rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(16px);
+  padding: 0;
+  overflow: hidden;
+}
+
+.custom-leaflet-popup .leaflet-popup-content {
+  margin: 14px 16px;
+  line-height: 1.5;
+}
+
+.custom-leaflet-popup .leaflet-popup-tip {
+  background: rgba(30, 36, 43, 0.96);
+}
+
+.custom-map-tooltip {
+  background: rgba(30, 36, 43, 0.94) !important;
+  color: #F8F9FA !important;
+  border: 1px solid rgba(255, 255, 255, 0.22) !important;
+  border-radius: 12px !important;
+  font-size: 11px !important;
+  font-family: var(--font-sans) !important;
+  box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.5), 0 0 1px 1px rgba(255, 255, 255, 0.1) !important;
+  backdrop-filter: blur(14px) !important;
+  padding: 8px 12px !important;
+  letter-spacing: 0.01em !important;
+  pointer-events: none !important;
+}
+
+.custom-map-tooltip::before {
+  border-top-color: rgba(30, 36, 43, 0.94) !important;
+}
+
+/* Reduced motion accessibility */
+@media (prefers-reduced-motion: reduce) {
+  .gis-hotspot-container,
+  .gis-cluster-wrapper {
+    transition: none !important;
+  }
+}
+
+
+
+

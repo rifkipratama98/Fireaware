@@ -3,18 +3,19 @@
 namespace App\Http\Controllers;
 
 use App\Models\Province;
-use Illuminate\Contracts\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class AboutController extends Controller
 {
     /**
      * Halaman publik: Tentang FireAware Kalimantan.
      */
-    public function index(): View
+    public function index(): Response
     {
         $provinces = Province::query()->orderBy('name')->get();
 
-        return view('tentang', [
+        return Inertia::render('Public/About', [
             'provinces' => $provinces,
         ]);
     }

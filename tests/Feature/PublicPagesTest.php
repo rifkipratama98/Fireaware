@@ -50,9 +50,13 @@ class PublicPagesTest extends TestCase
         $response = $this->get(route('home'));
 
         $response->assertStatus(200);
-        $response->assertSee('Pantau titik panas dan risiko kebakaran hutan');
-        $response->assertSee('Kalimantan Barat');
-        $response->assertSee('Pengumuman Cuaca Panas');
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('Public/Home')
+            ->has('provinces')
+            ->has('announcements', 1)
+            ->where('announcements.0.title', 'Pengumuman Cuaca Panas')
+            ->where('provinces.0.name', 'Kalimantan Barat')
+        );
     }
 
     public function test_home_summary_api_returns_valid_json(): void
@@ -96,9 +100,11 @@ class PublicPagesTest extends TestCase
         $response = $this->get(route('hotspot.map'));
 
         $response->assertStatus(200);
-        $response->assertSee('Peta Hotspot Kalimantan');
-        $response->assertSee('Kalimantan Timur');
-        $response->assertSee('id="leafletMap"', false);
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('Public/HotspotMap')
+            ->has('provinces', 1)
+            ->where('provinces.0.name', 'Kalimantan Timur')
+        );
     }
 
     public function test_hotspot_map_data_api_filters_correctly(): void
@@ -159,18 +165,15 @@ class PublicPagesTest extends TestCase
         $response = $this->get(route('air.quality', ['stasiun' => 'stasiun-pontianak-kota']));
 
         $response->assertStatus(200);
-        $response->assertSee('Stasiun Pontianak Kota');
-        $response->assertSee('42');
-        $response->assertSee('Sedang');
-
-        // Verifikasi komponen baru pada halaman Kualitas Udara yang diredesain
-        $response->assertSee('Kualitas Udara Kalimantan');
-        $response->assertSee('Sensor Terverifikasi');
-        $response->assertSee('Spektrum Tingkat Pencemaran ISPU');
-        $response->assertSee('Panduan Kategori Kualitas Udara (ISPU)');
-        $response->assertSee('Panduan Perlindungan Diri &amp; Keluarga', false);
-        $response->assertSee('Gunakan Masker Standar Partikulat');
-        $response->assertSee('Dinamika Partikel PM2.5 di Kalimantan');
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('Public/AirQuality')
+            ->has('provinces')
+            ->has('stations', 1)
+            ->where('activeStation.name', 'Stasiun Pontianak Kota')
+            ->where('latest.value', fn ($val) => (float) $val === 42.0)
+            ->where('latest.aqi_category', 'Sedang')
+            ->where('category.label', 'Sedang')
+        );
     }
 
     public function test_air_quality_page_displays_friendly_empty_state_when_station_has_no_reading(): void
@@ -187,11 +190,12 @@ class PublicPagesTest extends TestCase
         $response = $this->get(route('air.quality', ['stasiun' => 'stasiun-palangka-raya-mandiri']));
 
         $response->assertStatus(200);
-        $response->assertSee('Stasiun Palangka Raya Mandiri');
-        $response->assertSee('Data Pembacaan Belum Tersedia');
-        // Pastikan konten edukasi tetap tampil meski live data belum ada
-        $response->assertSee('Panduan Kategori Kualitas Udara (ISPU)');
-        $response->assertSee('Panduan Perlindungan Diri &amp; Keluarga', false);
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('Public/AirQuality')
+            ->where('activeStation.name', 'Stasiun Palangka Raya Mandiri')
+            ->where('latest', null)
+            ->has('allCategories')
+        );
     }
 
     public function test_air_quality_page_displays_friendly_empty_state_when_no_stations(): void
@@ -201,10 +205,12 @@ class PublicPagesTest extends TestCase
         $response = $this->get(route('air.quality', ['provinsi' => 'kaltara']));
 
         $response->assertStatus(200);
-        $response->assertSee('Stasiun Pemantau Belum Tersedia');
-        // Pastikan konten edukasi tetap tampil ramah publik
-        $response->assertSee('Panduan Kategori Kualitas Udara (ISPU)');
-        $response->assertSee('Panduan Perlindungan Diri &amp; Keluarga', false);
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('Public/AirQuality')
+            ->where('activeStation', null)
+            ->has('stations', 0)
+            ->has('allCategories')
+        );
     }
 
     public function test_air_quality_page_renders_chart_and_stats_when_history_available(): void
@@ -253,11 +259,15 @@ class PublicPagesTest extends TestCase
         $response = $this->get(route('air.quality', ['stasiun' => 'stasiun-banjarbaru']));
 
         $response->assertStatus(200);
-        $response->assertSee('aqTrendChart');
-        $response->assertSee('aq-history-data');
-        $response->assertSee('Terendah:');
-        $response->assertSee('Tertinggi:');
-        $response->assertSee('Rata-rata:');
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('Public/AirQuality')
+            ->where('activeStation.name', 'Stasiun Banjarbaru')
+            ->where('history.available', true)
+            ->has('history.points', 3)
+            ->where('historyStats.min', fn ($v) => (float) $v === 20.0)
+            ->where('historyStats.max', fn ($v) => (float) $v === 50.0)
+            ->where('historyStats.avg', fn ($v) => (float) $v === 35.0)
+        );
     }
 
     public function test_about_page_loads_successfully_with_provinces_and_disclaimer(): void
@@ -268,11 +278,74 @@ class PublicPagesTest extends TestCase
         $response = $this->get(route('about'));
 
         $response->assertStatus(200);
-        $response->assertSee('Mengenal FireAware Kalimantan');
-        $response->assertSee('Kalimantan Barat');
-        $response->assertSee('Kalimantan Tengah');
-        $response->assertSee('NASA FIRMS');
-        $response->assertSee('Bukan Sistem Prediksi Kebakaran');
-        $response->assertSee('Batasan Sistem &amp; Disclaimer', false);
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('Public/About')
+            ->has('provinces', 2)
+            ->where('provinces.0.name', 'Kalimantan Barat')
+            ->where('provinces.1.name', 'Kalimantan Tengah')
+        );
+    }
+
+    public function test_announcements_index_page_loads_with_inertia_and_props(): void
+    {
+        $prov = Province::create(['name' => 'Kalimantan Timur', 'slug' => 'kalimantan-timur', 'code' => 'KALTIM']);
+
+        Announcement::create([
+            'title' => 'Peringatan Asap Tebal Kutai Kartanegara',
+            'slug' => 'peringatan-asap-tebal-kukar',
+            'summary' => 'Ringkasan rilis siaga kabut asap wilayah Kukar.',
+            'body' => 'Posko BPBD mengimbau masyarakat untuk mengurangi aktivitas luar ruang.',
+            'level' => Announcement::LEVEL_WASPADA,
+            'province_id' => $prov->id,
+            'source_name' => 'BPBD Kaltim',
+            'status' => Announcement::STATUS_PUBLISHED,
+            'is_active' => true,
+            'published_at' => now()->subHours(3),
+        ]);
+
+        $response = $this->get(route('announcements.index'));
+
+        $response->assertStatus(200);
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('Public/Announcements/Index')
+            ->has('announcements.data', 1)
+            ->has('provinces', 1)
+            ->has('regionalStatus')
+            ->has('categories', 4)
+            ->has('stats')
+            ->where('announcements.data.0.title', 'Peringatan Asap Tebal Kutai Kartanegara')
+            ->where('announcements.data.0.level_label', 'Waspada')
+        );
+    }
+
+    public function test_announcement_detail_page_loads_with_inertia(): void
+    {
+        $prov = Province::create(['name' => 'Kalimantan Utara', 'slug' => 'kalimantan-utara', 'code' => 'KALTARA']);
+
+        $ann = Announcement::create([
+            'title' => 'Imbauan Kesiapsiagaan Karhutla Nunukan',
+            'slug' => 'imbauan-kesiapsiagaan-karhutla-nunukan',
+            'summary' => 'Ringkasan imbauan pencegahan karhutla.',
+            'body' => "Pemerintah Kabupaten Nunukan mengeluarkan surat edaran pencegahan pembukaan lahan dengan cara membakar.\n\nPatroli gabungan ditingkatkan.",
+            'level' => Announcement::LEVEL_INFO,
+            'province_id' => $prov->id,
+            'source_name' => 'Pemkab Nunukan',
+            'source_url' => 'https://nunukankab.go.id',
+            'status' => Announcement::STATUS_PUBLISHED,
+            'is_active' => true,
+            'published_at' => now()->subDay(),
+        ]);
+
+        $response = $this->get(route('announcements.show', $ann->slug));
+
+        $response->assertStatus(200);
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('Public/Announcements/Show')
+            ->where('announcement.title', 'Imbauan Kesiapsiagaan Karhutla Nunukan')
+            ->where('announcement.source_name', 'Pemkab Nunukan')
+            ->where('announcement.source_url', 'https://nunukankab.go.id')
+            ->has('recentAnnouncements')
+            ->has('back_label')
+        );
     }
 }

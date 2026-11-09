@@ -112,9 +112,12 @@ class AnnouncementTest extends TestCase
         $response = $this->get(route('announcements.show', $ann->slug));
 
         $response->assertStatus(200);
-        $response->assertSee('Rilis Kedaruratan Bencana Asap Provinsi');
-        $response->assertSee('Pos Komando Darurat Karhutla');
-        $response->assertSee('https://bpbd.go.id/darurat');
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('Public/Announcements/Show')
+            ->where('announcement.title', 'Rilis Kedaruratan Bencana Asap Provinsi')
+            ->where('announcement.source_name', 'Pos Komando Darurat Karhutla')
+            ->where('announcement.source_url', 'https://bpbd.go.id/darurat')
+        );
         $response->assertSee('Kembali ke Daftar Pengumuman');
     }
 
