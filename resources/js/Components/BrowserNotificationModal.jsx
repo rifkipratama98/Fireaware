@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal } from './Modal';
 import { Button } from './Button';
-import { Bell, BellOff, Info, CheckCircle2, AlertTriangle } from 'lucide-react';
+import { Bell, BellOff, Info, CheckCircle2 } from 'lucide-react';
 
 export function BrowserNotificationModal({ isOpen, onClose }) {
     const [permission, setPermission] = useState('default');

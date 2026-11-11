@@ -6,7 +6,6 @@ use App\Services\Integrations\AirQualitySyncService;
 use App\Services\Integrations\BmkgKarhutlaSyncService;
 use App\Services\Integrations\FirmsHotspotSyncService;
 use App\Services\Integrations\IntegrationManagerService;
-use App\Services\Integrations\SyncResult;
 use Illuminate\Console\Command;
 use Illuminate\Support\Str;
 

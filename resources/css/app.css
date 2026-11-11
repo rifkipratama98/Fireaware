@@ -346,6 +346,15 @@
   }
 }
 
+/* Print and document capture stability */
+@media print {
+  header.sticky,
+  header.fixed {
+    position: static !important;
+    margin-bottom: 0 !important;
+  }
+}
+
 
 
 

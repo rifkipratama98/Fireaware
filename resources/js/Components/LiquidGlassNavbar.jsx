@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Link, usePage } from '@inertiajs/react';
-import { motion, AnimatePresence } from 'motion/react';
-import { Trees, Bell, MapPin, Menu, ChevronDown, Flame, BookOpen, Shield, Info } from 'lucide-react';
+import { motion } from 'motion/react';
+import { Trees, Bell, MapPin, Menu, LogIn, Shield } from 'lucide-react';
 import { MobileNavigation } from './MobileNavigation';
 import { cn } from '@/Lib/utils';
 
 export function LiquidGlassNavbar({ onOpenAlertModal }) {
-    const { url } = usePage();
+    const { url, props } = usePage();
+    const user = props?.auth?.user;
     const [scrolled, setScrolled] = useState(false);
     const [mobileOpen, setMobileOpen] = useState(false);
-    const [dropdownOpen, setDropdownOpen] = useState(false);
 
     useEffect(() => {
         const handleScroll = () => {
@@ -38,7 +38,7 @@ export function LiquidGlassNavbar({ onOpenAlertModal }) {
     return (
         <>
             <header className={cn(
-                'fixed top-0 left-0 right-0 z-50 w-full px-3 sm:px-6 lg:px-8 transition-all duration-300 pointer-events-none',
+                'sticky top-0 left-0 right-0 z-50 w-full px-3 sm:px-6 lg:px-8 transition-all duration-300 pointer-events-none -mb-16 sm:-mb-20',
                 scrolled ? 'pt-2.5 sm:pt-3' : 'pt-3.5 sm:pt-4'
             )}>
                 <nav
@@ -110,6 +110,26 @@ export function LiquidGlassNavbar({ onOpenAlertModal }) {
                             <span>Peringatan</span>
                         </button>
 
+                        {user ? (
+                            <Link
+                                href="/admin"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#F8F9FA] bg-white/[0.08] hover:bg-white/[0.14] border border-white/15 hover:border-white/25 transition-all shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15)] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#52B788] active:scale-95"
+                                title={`Dashboard Admin (${user.name || 'Admin'})`}
+                            >
+                                <Shield className="w-3.5 h-3.5 text-[#52B788]" />
+                                <span>Dashboard</span>
+                            </Link>
+                        ) : (
+                            <Link
+                                href="/admin/login"
+                                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-[#F8F9FA] bg-white/[0.08] hover:bg-white/[0.14] border border-white/15 hover:border-white/25 transition-all shadow-[inset_0_1px_0_0_rgba(255,255,255,0.15)] cursor-pointer focus:outline-none focus:ring-2 focus:ring-[#E05A2B] active:scale-95"
+                                title="Masuk Administrator"
+                            >
+                                <LogIn className="w-3.5 h-3.5 text-[#F8F9FA]/80" />
+                                <span>Login</span>
+                            </Link>
+                        )}
+
                         <Link
                             href="/peta-hotspot"
                             className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#E05A2B] via-[#E05A2B] to-[#D94E34] hover:brightness-110 border border-white/25 shadow-[0_4px_16px_rgba(224,90,43,0.35),inset_0_1px_0_0_rgba(255,255,255,0.3)] transition-all active:scale-95"
@@ -121,6 +141,18 @@ export function LiquidGlassNavbar({ onOpenAlertModal }) {
 
                     {/* Mobile Menu Toggle Button */}
                     <div className="flex lg:hidden items-center gap-1.5">
+                        <Link
+                            href={user ? '/admin' : '/admin/login'}
+                            className="p-2 rounded-xl text-[#F8F9FA] hover:bg-white/10"
+                            aria-label={user ? 'Dashboard Admin' : 'Login Admin'}
+                            title={user ? 'Dashboard Admin' : 'Login Admin'}
+                        >
+                            {user ? (
+                                <Shield className="w-4 h-4 text-[#52B788]" />
+                            ) : (
+                                <LogIn className="w-4 h-4 text-[#F8F9FA]/90" />
+                            )}
+                        </Link>
                         <button
                             type="button"
                             onClick={onOpenAlertModal}
@@ -148,6 +180,7 @@ export function LiquidGlassNavbar({ onOpenAlertModal }) {
                 navLinks={navLinks}
                 currentUrl={url}
                 onOpenAlertModal={onOpenAlertModal}
+                user={user}
             />
         </>
     );

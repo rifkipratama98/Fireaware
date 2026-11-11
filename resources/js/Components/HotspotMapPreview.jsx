@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { cn } from '@/Lib/utils';
-import { Flame, MapPin, Shield, Layers, RefreshCw } from 'lucide-react';
+import { Flame, Shield } from 'lucide-react';
 
 export function HotspotMapPreview({
     hotspots = [],

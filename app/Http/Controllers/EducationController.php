@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\EducationArticle;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 use Inertia\Response;
 

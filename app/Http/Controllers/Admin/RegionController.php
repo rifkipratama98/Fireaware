@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\AirQualityStation;
 use App\Models\Announcement;
-use App\Models\Hotspot;
 use App\Models\Province;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;

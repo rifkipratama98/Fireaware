@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'motion/react';
-import { X, Bell, Shield, Flame, MapPin, Wind, BookOpen, FileText, Info, ChevronRight } from 'lucide-react';
+import { X, Bell, Shield, Flame, ChevronRight, LogIn } from 'lucide-react';
 
 export function MobileNavigation({
     isOpen,
@@ -9,6 +9,7 @@ export function MobileNavigation({
     navLinks,
     currentUrl,
     onOpenAlertModal,
+    user,
 }) {
     return (
         <AnimatePresence>
@@ -101,14 +102,25 @@ export function MobileNavigation({
                                 <span>Peringatan Bahaya</span>
                             </button>
 
-                            <Link
-                                href="/admin"
-                                onClick={onClose}
-                                className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-[#2B303A] text-white hover:bg-black/40 border border-white/10 transition-all shadow-sm"
-                            >
-                                <Shield className="w-4 h-4 text-[#52B788]" />
-                                <span>Area Pengelola</span>
-                            </Link>
+                            {user ? (
+                                <Link
+                                    href="/admin"
+                                    onClick={onClose}
+                                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-[#2B303A] text-white hover:bg-black/40 border border-white/10 transition-all shadow-sm"
+                                >
+                                    <Shield className="w-4 h-4 text-[#52B788]" />
+                                    <span>Dashboard Admin</span>
+                                </Link>
+                            ) : (
+                                <Link
+                                    href="/admin/login"
+                                    onClick={onClose}
+                                    className="w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold bg-white/10 text-white hover:bg-white/15 border border-white/15 transition-all shadow-sm"
+                                >
+                                    <LogIn className="w-4 h-4 text-[#F8F9FA]" />
+                                    <span>Login Admin</span>
+                                </Link>
+                            )}
                         </div>
                     </motion.div>
                 </div>

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Head, Link, router } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { motion } from 'motion/react';
 import { PublicLayout } from '@/Layouts/PublicLayout';
 import { SectionHeading } from '@/Components/SectionHeading';
@@ -17,17 +17,14 @@ import {
     ArrowRight,
     Clock,
     Activity,
-    Layers,
     Compass,
     CheckCircle2,
-    AlertTriangle,
     Trees,
     Radio,
     ChevronRight,
     Globe2,
     Building2,
     Droplets,
-    FileText,
 } from 'lucide-react';
 
 export default function Home({
@@ -122,7 +119,7 @@ export default function Home({
     };
 
     return (
-        <PublicLayout title="Beranda — Sistem Pemantauan Karhutla Kalimantan">
+        <PublicLayout title="Beranda Sistem Pemantauan Karhutla Kalimantan">
             {/* 1. HERO SECTION (Cinematic, From Ember to Forest Recovery) */}
             <section className="relative min-h-[85vh] lg:min-h-[92vh] flex items-center justify-center overflow-hidden bg-[#1E242B] text-white pt-28 sm:pt-36 pb-28 sm:pb-36 lg:pb-44">
                 {/* Background Image with Controlled Multi-Layered Overlays */}
@@ -152,17 +149,6 @@ export default function Home({
                         animate="visible"
                         className="max-w-3xl"
                     >
-                        {/* Eyebrow Pill (Live Beacon, No Bullet Dots) */}
-                        <motion.div variants={itemVariants} className="mb-6 inline-flex items-center">
-                            <span className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full text-[11px] font-bold uppercase tracking-widest bg-[#1E242B]/70 text-[#F4A261] backdrop-blur-md border border-white/18 shadow-[inset_0_1px_0_0_rgba(255,255,255,0.2)]">
-                                <span className="relative flex h-2 w-2">
-                                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#E05A2B] opacity-75" />
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#E05A2B]" />
-                                </span>
-                                <span>Environmental Monitoring Platform</span>
-                            </span>
-                        </motion.div>
-
                         {/* Main Headline */}
                         <motion.h1
                             variants={itemVariants}
@@ -417,7 +403,7 @@ export default function Home({
                                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                                         />
                                         <div className="absolute inset-0 bg-gradient-to-t from-[#1E242B] via-transparent to-transparent opacity-80" />
-                                        
+
                                         {/* Badges on image */}
                                         <div className="absolute top-3 left-3">
                                             <span className="px-2.5 py-1 rounded-md text-[10px] font-bold bg-[#1E242B]/90 text-white backdrop-blur-md uppercase tracking-wider">
@@ -534,8 +520,8 @@ export default function Home({
                                                     latestAirQuality.category === 'BAIK'
                                                         ? 'aman'
                                                         : latestAirQuality.category === 'SEDANG'
-                                                        ? 'waspada'
-                                                        : 'darurat'
+                                                            ? 'waspada'
+                                                            : 'darurat'
                                                 }
                                             >
                                                 {latestAirQuality.category || 'ISPU'}
@@ -620,13 +606,12 @@ export default function Home({
                                             <div>
                                                 <div className="flex items-center justify-between gap-2 mb-2">
                                                     <span
-                                                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${
-                                                            item.level === 3
+                                                        className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${item.level === 3
                                                                 ? 'bg-[#E63946]/15 text-[#E63946]'
                                                                 : item.level === 2
-                                                                ? 'bg-[#F4A261]/20 text-[#a85817]'
-                                                                : 'bg-[#2A9D8F]/15 text-[#2A9D8F]'
-                                                        }`}
+                                                                    ? 'bg-[#F4A261]/20 text-[#a85817]'
+                                                                    : 'bg-[#2A9D8F]/15 text-[#2A9D8F]'
+                                                            }`}
                                                     >
                                                         {item.level_label || 'Peringatan'}
                                                     </span>

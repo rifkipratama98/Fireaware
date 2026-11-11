@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { cn } from '@/Lib/utils';
-import { ImageOff, Trees } from 'lucide-react';
+import { Trees } from 'lucide-react';
 
 export function ImageWithFallback({
     src,

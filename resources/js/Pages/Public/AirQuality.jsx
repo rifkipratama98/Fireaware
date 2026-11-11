@@ -1,32 +1,21 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Head, Link, router } from '@inertiajs/react';
-import { motion, AnimatePresence } from 'motion/react';
+import { Link, router } from '@inertiajs/react';
+import { motion } from 'motion/react';
 import {
     Wind,
     Activity,
     ShieldCheck,
-    AlertTriangle,
-    AlertCircle,
     Info,
-    Calendar,
     Clock,
     MapPin,
     RotateCcw,
-    Search,
     ChevronRight,
-    TrendingUp,
-    TrendingDown,
-    Layers,
     ExternalLink,
     ShieldAlert,
-    CheckCircle2,
     HeartPulse,
     Trees,
     Radio,
-    FileText,
-    Sparkles,
     Flame,
-    Droplets,
     Building2,
     Compass,
     HelpCircle,

@@ -118,9 +118,12 @@ class GuideTest extends TestCase
         $response = $this->get(route('guides.show', $guide->slug));
 
         $response->assertStatus(200);
-        $response->assertSee('Kanal Pantauan Resmi BMKG dan SIPONGI');
-        $response->assertSee('BMKG & KLHK');
-        $response->assertSee('https://sipongi.menlhk.go.id');
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('Public/Guides/Show')
+            ->where('guide.title', 'Kanal Pantauan Resmi BMKG dan SIPONGI')
+            ->where('guide.source_name', 'BMKG & KLHK')
+            ->where('guide.source_url', 'https://sipongi.menlhk.go.id')
+        );
         $response->assertSee('Kembali ke Panduan');
     }
 

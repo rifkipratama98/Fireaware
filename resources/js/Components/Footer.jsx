@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from '@inertiajs/react';
-import { Trees, ShieldCheck, Mail, MapPin, ExternalLink, Heart } from 'lucide-react';
+import { Trees, ShieldCheck, Mail, MapPin } from 'lucide-react';
 
 export function Footer() {
     return (

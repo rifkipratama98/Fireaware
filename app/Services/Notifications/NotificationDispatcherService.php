@@ -5,7 +5,6 @@ namespace App\Services\Notifications;
 use App\Models\NotificationLog;
 use App\Models\NotificationSetting;
 use App\Models\Province;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;

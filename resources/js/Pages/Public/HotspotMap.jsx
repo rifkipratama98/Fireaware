@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import { motion, AnimatePresence } from 'motion/react';
 import { PublicLayout } from '@/Layouts/PublicLayout';
 import { Button } from '@/Components/Button';

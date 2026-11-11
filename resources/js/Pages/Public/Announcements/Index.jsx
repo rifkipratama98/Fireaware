@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Head, Link, router } from '@inertiajs/react';
-import { motion, AnimatePresence } from 'motion/react';
+import { Link, router } from '@inertiajs/react';
+import { motion } from 'motion/react';
 import {
     ShieldAlert,
-    AlertTriangle,
     Info,
     Search,
     Filter,
@@ -11,17 +10,13 @@ import {
     Clock,
     MapPin,
     ArrowRight,
-    ExternalLink,
     RotateCcw,
-    Sparkles,
     ChevronRight,
     Newspaper,
     Shield,
     CheckCircle2,
-    SlidersHorizontal,
     Radio,
     Flame,
-    Share2,
     BookOpen,
 } from 'lucide-react';
 import { PublicLayout } from '@/Layouts/PublicLayout';

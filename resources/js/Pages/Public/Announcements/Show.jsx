@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Head, Link } from '@inertiajs/react';
+import { Link } from '@inertiajs/react';
 import { motion } from 'motion/react';
 import {
     ChevronRight,
@@ -15,12 +15,8 @@ import {
     AlertTriangle,
     ShieldAlert,
     Info,
-    Flame,
-    Bookmark,
-    Eye,
     Printer,
     ArrowUpRight,
-    Sparkles,
 } from 'lucide-react';
 import { PublicLayout } from '@/Layouts/PublicLayout';
 

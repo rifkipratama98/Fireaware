@@ -348,4 +348,109 @@ class PublicPagesTest extends TestCase
             ->has('back_label')
         );
     }
+
+    public function test_education_index_page_loads_with_inertia(): void
+    {
+        EducationArticle::create([
+            'title' => 'Anatomi Gambut Tropis',
+            'slug' => 'anatomi-gambut-tropis',
+            'category' => 'ekosistem-gambut',
+            'summary' => 'Ringkasan anatomi gambut.',
+            'content' => 'Isi materi gambut...',
+            'author' => 'Tim Riset',
+            'status' => EducationArticle::STATUS_PUBLISHED,
+            'published_at' => now()->subDay(),
+        ]);
+
+        $response = $this->get(route('edukasi.index'));
+
+        $response->assertStatus(200);
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('Public/Education/Index')
+            ->has('articles.data', 1)
+            ->has('categories')
+            ->has('totalCount')
+            ->where('articles.data.0.title', 'Anatomi Gambut Tropis')
+            ->where('articles.data.0.category_label', 'Ekosistem Lahan Gambut')
+        );
+    }
+
+    public function test_education_detail_page_loads_with_inertia(): void
+    {
+        $article = EducationArticle::create([
+            'title' => 'Teknik Sekat Kanal Gambut',
+            'slug' => 'teknik-sekat-kanal-gambut',
+            'category' => 'teknik-pencegahan',
+            'summary' => 'Ringkasan sekat kanal.',
+            'content' => "### Sekat Kanal Primer\nMetode penahanan air.\n\n### Revegetasi Lahan\nPenanaman bibit Belangeran.",
+            'author' => 'Spesialis Gambut',
+            'source_name' => 'Badan Restorasi Gambut',
+            'status' => EducationArticle::STATUS_PUBLISHED,
+            'published_at' => now()->subDay(),
+        ]);
+
+        $response = $this->get(route('edukasi.show', $article->slug));
+
+        $response->assertStatus(200);
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('Public/Education/Show')
+            ->where('article.title', 'Teknik Sekat Kanal Gambut')
+            ->where('article.author', 'Spesialis Gambut')
+            ->has('relatedArticles')
+            ->has('article.headings', 2)
+            ->has('back_label')
+        );
+    }
+
+    public function test_guides_index_page_loads_with_inertia(): void
+    {
+        Guide::create([
+            'title' => 'Panduan Menghadapi Asap Pejabat',
+            'slug' => 'panduan-menghadapi-asap-pejabat',
+            'category' => 'menghadapi-asap',
+            'summary' => 'Ringkasan panduan asap.',
+            'content' => 'Isi materi panduan perlindungan asap.',
+            'source_name' => 'Kemenkes RI',
+            'status' => Guide::STATUS_PUBLISHED,
+            'published_at' => now()->subDay(),
+        ]);
+
+        $response = $this->get(route('guides.index'));
+
+        $response->assertStatus(200);
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('Public/Guides/Index')
+            ->has('guides.data', 1)
+            ->has('categories')
+            ->has('totalPublishedCount')
+            ->where('guides.data.0.title', 'Panduan Menghadapi Asap Pejabat')
+            ->where('guides.data.0.category_label', 'Menghadapi Asap')
+        );
+    }
+
+    public function test_guide_detail_page_loads_with_inertia(): void
+    {
+        $guide = Guide::create([
+            'title' => 'Prosedur Masker Partikulat Darurat',
+            'slug' => 'prosedur-masker-partikulat-darurat',
+            'category' => 'mengurangi-paparan-asap',
+            'summary' => 'Ringkasan prosedur masker.',
+            'content' => "### Pemilihan Masker N95\nStandar filtrasi 95%.\n\n### Cara Fit Check\nPastikan segel rapat.",
+            'source_name' => 'WHO & Kemenkes',
+            'status' => Guide::STATUS_PUBLISHED,
+            'published_at' => now()->subDay(),
+        ]);
+
+        $response = $this->get(route('guides.show', $guide->slug));
+
+        $response->assertStatus(200);
+        $response->assertInertia(fn (\Inertia\Testing\AssertableInertia $page) => $page
+            ->component('Public/Guides/Show')
+            ->where('guide.title', 'Prosedur Masker Partikulat Darurat')
+            ->where('guide.source_name', 'WHO & Kemenkes')
+            ->has('relatedGuides')
+            ->has('guide.headings', 2)
+            ->has('back_label')
+        );
+    }
 }
