@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import { motion } from 'motion/react';
-import { Trees, Bell, MapPin, Menu, LogIn, Shield } from 'lucide-react';
+import { Trees, Bell, Menu, LogIn, Shield } from 'lucide-react';
 import { MobileNavigation } from './MobileNavigation';
 import { cn } from '@/Lib/utils';
 
@@ -129,14 +129,6 @@ export function LiquidGlassNavbar({ onOpenAlertModal }) {
                                 <span>Login</span>
                             </Link>
                         )}
-
-                        <Link
-                            href="/peta-hotspot"
-                            className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full text-xs font-bold text-white bg-gradient-to-r from-[#E05A2B] via-[#E05A2B] to-[#D94E34] hover:brightness-110 border border-white/25 shadow-[0_4px_16px_rgba(224,90,43,0.35),inset_0_1px_0_0_rgba(255,255,255,0.3)] transition-all active:scale-95"
-                        >
-                            <MapPin className="w-3.5 h-3.5" />
-                            <span>Peta Hotspot</span>
-                        </Link>
                     </div>
 
                     {/* Mobile Menu Toggle Button */}

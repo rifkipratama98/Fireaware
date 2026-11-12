@@ -9,17 +9,22 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
-use Illuminate\View\View;
+use Inertia\Inertia;
+use Inertia\Response;
 
 class AuthController extends Controller
 {
-    public function showLoginForm(): View|RedirectResponse
+    public function showLoginForm(): Response|RedirectResponse
     {
         if (Auth::check()) {
             return redirect()->route('admin.dashboard');
         }
 
-        return view('admin.auth.login');
+        return Inertia::render('Admin/Auth/Login', [
+            'title'  => 'Masuk sebagai Admin',
+            'status' => session('status'),
+            'fields' => ['Email', 'Password'],
+        ]);
     }
 
     public function login(Request $request): RedirectResponse

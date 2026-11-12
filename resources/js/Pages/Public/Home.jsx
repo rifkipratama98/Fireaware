@@ -120,25 +120,33 @@ export default function Home({
 
     return (
         <PublicLayout title="Beranda Sistem Pemantauan Karhutla Kalimantan">
-            {/* 1. HERO SECTION (Cinematic, From Ember to Forest Recovery) */}
+            {/* 1. HERO SECTION (Cinematic Video Background Kebakaran Hutan) */}
             <section className="relative min-h-[85vh] lg:min-h-[92vh] flex items-center justify-center overflow-hidden bg-[#1E242B] text-white pt-28 sm:pt-36 pb-28 sm:pb-36 lg:pb-44">
-                {/* Background Image with Controlled Multi-Layered Overlays */}
+                {/* Background Video with Controlled Multi-Layered Overlays */}
                 <div className="absolute inset-0 z-0 overflow-hidden">
-                    <motion.img
-                        initial={{ scale: 1.06, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        transition={{ duration: 1.2, ease: [0.16, 1, 0.3, 1] }}
-                        src="/images/hero-kalimantan-rainforest.jpg"
-                        alt="Bentang Kanopi Hutan Hujan Tropis Kalimantan"
-                        className="w-full h-full object-cover object-[center_32%] sm:object-[center_20%] select-none pointer-events-none"
-                        loading="eager"
-                    />
-                    {/* Left-to-Right Contrast Gradient: Darker on left for text legibility, transparent on right to reveal the sunlight & river */}
-                    <div className="absolute inset-0 bg-gradient-to-r from-[#1E242B]/95 via-[#1E242B]/85 via-45% to-[#1B4332]/40 sm:to-transparent" />
+                    <video
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        preload="auto"
+                        poster="/images/wildfire-firefighter.jpg"
+                        className="w-full h-full object-cover object-center select-none pointer-events-none scale-105"
+                    >
+                        <source src="/images/kebakaran.mp4" type="video/mp4" />
+                        <img
+                            src="/images/wildfire-firefighter.jpg"
+                            alt="Kebakaran Hutan dan Lahan Kalimantan"
+                            className="w-full h-full object-cover object-center"
+                        />
+                    </video>
+
+                    {/* Left-to-Right Contrast Gradient: Darker on left for text legibility, transparent on right to reveal the fire */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-[#1E242B]/95 via-[#1E242B]/85 via-45% to-[#1E242B]/40 sm:to-transparent" />
                     {/* Top-to-Bottom Subtle Ambient Vignette: Charcoal Ash at top for navbar contrast, Deep Pine & Charcoal Ash at bottom */}
                     <div className="absolute inset-0 bg-gradient-to-b from-[#1E242B]/60 via-transparent via-50% to-[#1E242B]" />
-                    {/* Subtle Warm Amber Glow accent at top-right to harmonize with sunrise */}
-                    <div className="absolute -top-24 right-0 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(244,162,97,0.15)_0%,transparent_70%)] pointer-events-none" />
+                    {/* Subtle Warm Amber Glow accent at top-right to harmonize with fire embers */}
+                    <div className="absolute -top-24 right-0 w-[500px] h-[500px] bg-[radial-gradient(circle,rgba(224,90,43,0.2)_0%,transparent_70%)] pointer-events-none" />
                 </div>
 
                 {/* Content Container */}
@@ -192,22 +200,6 @@ export default function Home({
                                 <span>Pelajari Panduan Keselamatan</span>
                             </Button>
                         </motion.div>
-
-                        {/* Live Telemetry Metadata Bar (Clean Separators, No Bullet Dots) */}
-                        <motion.div
-                            variants={itemVariants}
-                            className="mt-10 sm:mt-12 pt-6 border-t border-white/15 flex flex-wrap items-center gap-y-2.5 gap-x-3 text-xs"
-                        >
-                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/30 backdrop-blur-md border border-white/10 text-[#F8F9FA]/90 font-medium">
-                                <Satellite className="w-3.5 h-3.5 text-[#52B788]" />
-                                <span>Telemetri Satelit NASA VIIRS &amp; MODIS</span>
-                            </div>
-                            <span className="hidden sm:inline w-px h-4 bg-white/20 self-center" aria-hidden="true" />
-                            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-black/30 backdrop-blur-md border border-white/10 text-[#F8F9FA]/90 font-medium">
-                                <Clock className="w-3.5 h-3.5 text-[#F4A261]" />
-                                <span>Pembaruan: {formatTimestamp(summary?.last_detected_at)} WITA</span>
-                            </div>
-                        </motion.div>
                     </motion.div>
                 </div>
             </section>
@@ -257,8 +249,8 @@ export default function Home({
                         </div>
 
                         {/* Stats Grid */}
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 pt-6">
-                            <div className="p-4 rounded-2xl bg-[#F6F5F2] border border-black/5 flex flex-col justify-between">
+                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 pt-6">
+                            <div className="p-4 sm:p-5 rounded-2xl bg-[#F6F5F2] border border-black/5 flex flex-col justify-between">
                                 <span className="text-xs font-medium text-[#1E242B]/70 mb-2">
                                     Total 7 Hari
                                 </span>
@@ -270,7 +262,7 @@ export default function Home({
                                 </div>
                             </div>
 
-                            <div className="p-4 rounded-2xl bg-[#F6F5F2] border border-black/5 flex flex-col justify-between">
+                            <div className="p-4 sm:p-5 rounded-2xl bg-[#F6F5F2] border border-black/5 flex flex-col justify-between">
                                 <span className="text-xs font-medium text-[#1E242B]/70 mb-2">
                                     24 Jam Terakhir
                                 </span>
@@ -282,19 +274,7 @@ export default function Home({
                                 </div>
                             </div>
 
-                            <div className="p-4 rounded-2xl bg-[#F6F5F2] border border-black/5 flex flex-col justify-between">
-                                <span className="text-xs font-medium text-[#1E242B]/70 mb-2">
-                                    Kepercayaan Tinggi (≥80%)
-                                </span>
-                                <div className="flex items-baseline gap-2">
-                                    <span className="text-3xl sm:text-4xl font-extrabold text-[#E63946] font-display">
-                                        {summary?.high_confidence ?? 0}
-                                    </span>
-                                    <span className="text-xs text-[#E63946]/70 font-medium">titik</span>
-                                </div>
-                            </div>
-
-                            <div className="p-4 rounded-2xl bg-[#1B4332] text-white border border-black/5 flex flex-col justify-between">
+                            <div className="p-4 sm:p-5 rounded-2xl bg-[#1B4332] text-white border border-black/5 flex flex-col justify-between">
                                 <span className="text-xs font-medium text-white/70 mb-2">
                                     Wilayah Terpilih
                                 </span>
@@ -607,10 +587,10 @@ export default function Home({
                                                 <div className="flex items-center justify-between gap-2 mb-2">
                                                     <span
                                                         className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold ${item.level === 3
-                                                                ? 'bg-[#E63946]/15 text-[#E63946]'
-                                                                : item.level === 2
-                                                                    ? 'bg-[#F4A261]/20 text-[#a85817]'
-                                                                    : 'bg-[#2A9D8F]/15 text-[#2A9D8F]'
+                                                            ? 'bg-[#E63946]/15 text-[#E63946]'
+                                                            : item.level === 2
+                                                                ? 'bg-[#F4A261]/20 text-[#a85817]'
+                                                                : 'bg-[#2A9D8F]/15 text-[#2A9D8F]'
                                                             }`}
                                                     >
                                                         {item.level_label || 'Peringatan'}
